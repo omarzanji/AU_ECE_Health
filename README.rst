@@ -11,7 +11,7 @@ Research ideas will be documented here along with any useful datasets.
 
     * From Oxford Academic, this study predicts the stages of sleep from a consumer wearable, such as an Apple / Android watch.
 
-#. `PSG vs. Actigraphy_`
+#. `PSG vs. Actigraphy`_
 
     * Sleep as Android compares actigraphy method of tracking sleep (as seen with smart watches) to polysomnography studies with EEG.
 
