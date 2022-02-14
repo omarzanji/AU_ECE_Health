@@ -2,14 +2,17 @@ import numpy as np
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Activation
+from sklearn.model_selection import train_test_split
 
 import matplotlib.pyplot as plt
 
-def generate_data(step_size=20):
-    x_line = np.arange(-50*np.pi, 50*np.pi, 0.1)
-    data = np.sin(x_line)
-
-    step_size = 20
+def generate_data(step_size=40, y_vals=None):
+    if y_vals == None:
+        x_line = np.arange(-40*np.pi, 40*np.pi, 0.1) # x
+        data = np.sin(x_line) # y
+    else:
+        data = y_vals
+    step_size = 40
     x = []
     y = []
     end_ndx = 0
@@ -35,7 +38,7 @@ class LSTM_model:
     
     def create_model(self):
         model = Sequential()
-        model.add(LSTM(20, input_shape=(20, 1)))
+        model.add(LSTM(40, input_shape=(40, 1)))
         model.add(Activation('tanh'))
         model.add(Dense(1))
         model.add(Activation('tanh'))
@@ -47,34 +50,68 @@ class LSTM_model:
         model.summary()
         return hist
 
-    def generate(self, model):
-        test_x = np.arange(0, 50*np.pi, 0.1)
-        func = np.cos(test_x)
+    def generate(self, model, vals=None):
+        if vals==None:
+            test_x = np.arange(0, 40*np.pi, 0.1)
+            func = np.sin(test_x)
+            test_y = func[:40]
+        else:
+            test_x = vals[0]
+            func = vals[1]
+            test_y = vals[1][:40]
 
-        test_y = func[:20]
-        
         result = []
 
-        for x in range(len(test_x) - 20):
-            inp = test_y[x : x+20]
-            inp = inp.reshape((1, 20, 1))
+        for x in range(len(test_x) - 40):
+            inp = test_y[x : x+40]
+            inp = inp.reshape((1, 40, 1))
             y = model.predict(inp, verbose=0)
             test_y = np.append(test_y, y)
 
-        plt.plot(test_y[20:], label='pred', color='blue')
-        plt.plot(test_y[:20], label='input', color='red')
+        x = np.arange(0,len(test_x))
+
+        fig = plt.figure(0)
+        plt.plot(x[:40], test_y[:40], label='input', color='red')
+        plt.plot(x[19:], test_y[19:], label='pred', color='blue')
+        # fig = plt.figure(1)
+        plt.plot(x, func, label='actual', color='green')
         plt.legend()
-        plt.show()
 
-
+def load_sleep_data():
+    import json
+    with open('data.json', 'r') as f:
+        data = json.load(f)
+    return np.array(data['x']), np.array(data['y'])
 
 if __name__=="__main__":
-    x_train, y_train = generate_data(20)
+    x_train, y_train = generate_data(40)
     x_train = x_train.reshape((x_train.shape[0], x_train.shape[1], 1))
     sin_gen = LSTM_model(x_train, y_train)
     sin_model = sin_gen.create_model()
     history = sin_gen.train_model(sin_model)
-    # plt.plot(history.history['loss'], label="loss")
-    # plt.legend(loc="upper right")
-
+    plt.plot(history.history['loss'], label="loss")
+    plt.legend(loc="upper right")
     sin_gen.generate(sin_model)
+    plt.show()
+    exit()
+    # x, y = load_sleep_data()
+    # x_t = x[0]
+    # y_t = y[0]
+    # # x = np.delete(x,4,0)
+    # # y = np.delete(y,4,0)
+    # data = []
+    # for vals in y:
+    #     for val in vals:
+    #         data.append(val)
+    # x_train, y_train = generate_data(40, data)
+    # x_train = x_train.reshape((x_train.shape[0], x_train.shape[1], 1))
+
+    # sleep_gen = LSTM_model(x_train, y_train)
+    # sleep_model = sleep_gen.create_model()
+    # hist = sleep_gen.train_model(sleep_model)
+
+    # fig = plt.figure(2)
+    # plt.plot(hist.history['loss'], label="loss")
+    # plt.legend(loc="upper right")
+    # sleep_gen.generate(sleep_model,(np.array(x_t),np.array(y_t)))
+    # plt.show()

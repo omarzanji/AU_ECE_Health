@@ -51,7 +51,32 @@ class Sleep:
         plt.plot(y, x)
         plt.show()
 
+    def export_data(self):
+        data = dict()
+        data['x'] = []
+        data['y'] = []
+        for session_ndx,session in enumerate(self.y):
+            print(session_ndx)
+            x = []
+            for ndx,i in enumerate(session):
+                if ':' in i: 
+                    x.append(i)
+                    end_ndx = ndx
+            try:
+                y = np.array(self.x[session_ndx][15:end_ndx+1]).astype(float)
+            except ValueError:
+                continue
+            data['x'].append(x)
+            data['y'].append(y.tolist())
+        import json
+        with open('data.json' ,'w') as f:
+            json.dump(data, f)
+
+
+            
+
 if __name__ == "__main__":
 
     sleep_session = Sleep(SLEEP_EXPORT_PATH)
     sleep_session.plot_sleep_session(9)
+    sleep_session.export_data()
