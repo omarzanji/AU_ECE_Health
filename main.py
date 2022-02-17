@@ -108,7 +108,7 @@ class SleepWake:
             inp = series
             inp = inp.reshape((1, 3, SEQ))
             y = model.predict(inp, verbose=0)
-            test_y_input = np.append(test_y_input, y)
+            test_y_input = np.append(test_y_input, np.rint(y))
 
         x = np.arange(0,len(test_y_complete))
 
@@ -130,7 +130,7 @@ class SleepWake:
         start = ndx_vals[0]
         end = ndx_vals[-1]
 
-        fig = plt.figure()
+        fig = plt.figure(1)
         gs = gridspec.GridSpec(4, 1, height_ratios=[4, 2, 2, 1]) 
 
         ax0 = plt.subplot(gs[0])
@@ -149,17 +149,18 @@ class SleepWake:
         ax3 = plt.subplot(gs[3], sharex=ax0)
         line3, = ax3.plot(self.sleep_time_arr[start:end+1], self.sleep_status_arr[start:end+1], color='orange')
 
-        ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='top right')
+        ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
                 
         plt.subplots_adjust(hspace=.1)
         plt.xticks(np.arange(0, len(self.sleep_time_arr[start:end+1]), 100))
-        plt.show()
+        # plt.show()
 
 if __name__ == "__main__":
     
     sleepwake = SleepWake()
     sleepwake.load_data()  
+    sleepwake.visualize_data(20)
     sleepwake.process_data()
     model = sleepwake.create_model()
     sleepwake.train_model(model)
-    sleepwake.generate(model, 10)
+    sleepwake.generate(model, 20)
