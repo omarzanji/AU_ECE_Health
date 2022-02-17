@@ -9,6 +9,12 @@ from matplotlib import pyplot as plt
 from matplotlib import gridspec
 import numpy as np
 
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense, Activation
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+
+
 class SleepWake:
 
     def __init__(self):
@@ -36,6 +42,83 @@ class SleepWake:
             self.axis1_arr.append(sample[6])
             self.axis2_arr.append(sample[7])
             self.axis3_arr.append(sample[8])
+
+
+    def process_data(self):
+        SEQ = 30
+        # STEP = 2
+        self.x = []
+        self.y = []
+        for ndx,sample in enumerate(self.sleep_time_arr):
+            try:
+                axis1_series = self.axis1_arr[ndx : ndx+SEQ]
+                axis2_series = self.axis2_arr[ndx : ndx+SEQ]
+                axis3_series = self.axis3_arr[ndx : ndx+SEQ]
+                series = [axis1_series, axis2_series, axis3_series]
+                label = self.sleep_status_arr[ndx+SEQ]
+                self.x.append(series)
+                self.y.append(label)
+            except IndexError:
+                break
+        self.x = np.array(self.x)
+        self.y = np.array(self.y)
+
+
+    def create_model(self):
+        SEQ= 30
+        model = Sequential()
+        model.add(LSTM(SEQ, input_shape=(3,SEQ)))
+        model.add(Activation('tanh'))
+        model.add(Dense(1))
+        model.add(Activation('tanh'))
+        model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError())
+        return model
+
+    def train_model(self, model):
+        hist = model.fit(self.x, self.y, epochs=4, verbose=1)
+        model.summary()
+        model.save('models/sleepwake.model')
+        return hist
+
+    def generate(self, model, day):
+        SEQ=30
+        
+        ndx_vals = []
+        for ndx,sample in enumerate(self.day_arr):
+            if sample == day:
+                ndx_vals.append(ndx)
+        start = ndx_vals[0]
+        end = ndx_vals[-1]
+
+        axis1=self.axis1_arr[start:end+1]
+        axis2=self.axis2_arr[start:end+1]
+        axis3=self.axis3_arr[start:end+1]
+        test_x = [axis1,axis2,axis3]
+        test_y_complete = self.sleep_status_arr[start:end+1]
+
+        test_y_input = test_y_complete[0:SEQ]
+        result = []
+
+        for x in range(len(test_y_complete) - SEQ):
+            axis1_series = axis1[x : x+SEQ]
+            axis2_series = axis2[x : x+SEQ]
+            axis3_series = axis3[x : x+SEQ]
+            series = np.array([axis1_series, axis2_series, axis3_series])
+            # print(series.shape)
+            inp = series
+            inp = inp.reshape((1, 3, SEQ))
+            y = model.predict(inp, verbose=0)
+            test_y_input = np.append(test_y_input, y)
+
+        x = np.arange(0,len(test_y_complete))
+
+        fig = plt.figure(0)
+        plt.plot(x[:SEQ], test_y_input[:SEQ], label='input', color='red')
+        plt.plot(x[SEQ:], test_y_input[SEQ:], label='pred', color='blue')
+        # fig = plt.figure(1)
+        plt.plot(x, test_y_complete, label='actual', color='green')
+        plt.legend()
+        plt.show()
 
 
     def visualize_data(self, day):
@@ -76,4 +159,7 @@ if __name__ == "__main__":
     
     sleepwake = SleepWake()
     sleepwake.load_data()  
-    sleepwake.visualize_data(20)
+    sleepwake.process_data()
+    model = sleepwake.create_model()
+    sleepwake.train_model(model)
+    sleepwake.generate(model, 10)
