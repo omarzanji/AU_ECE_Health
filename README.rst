@@ -15,6 +15,11 @@ Research ideas will be documented here along with any useful datasets.
 
     * Sleep as Android compares actigraphy method of tracking sleep (as seen with smart watches) to polysomnography studies with EEG.
 
+#. `Sleep-Wake Prediction`_
+
+    * Sleep / Wake prediction and insomnia predictor using SVM and RF on labeled sleep actigraphy data.
+
 .. _Sleep Stage Prediction via Consumer Wearable Device: https://academic.oup.com/sleep/article/42/12/zsz180/5549536
 .. _Sleep-Wake Syndrome in Children from Screen Media Use: https://www.sciencedirect.com/science/article/abs/pii/S2352721820301935?via%3Dihub
 .. _PSG vs. Actigraphy: https://sleep.urbandroid.org/sleep-lab-comparison/
+.. _Sleep-Wake Prediction: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8206690/

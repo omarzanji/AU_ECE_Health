@@ -10,7 +10,7 @@ import numpy as np
 import csv
 
 # Sleep as Android export path.
-SLEEP_EXPORT_PATH = 'sleep-export.csv'
+SLEEP_EXPORT_PATH = 'data/sleep-export.csv'
 
 class Sleep:
 
@@ -69,9 +69,8 @@ class Sleep:
             data['x'].append(x)
             data['y'].append(y.tolist())
         import json
-        with open('data.json' ,'w') as f:
+        with open('data/sleep_as_android_data.json' ,'w') as f:
             json.dump(data, f)
-
 
             
 
