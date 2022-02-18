@@ -1,3 +1,18 @@
+Sleep-Wake Prediction via Time Series LSTM Model
+================================================
+
+* Looking at sleep actigraphy data as a time series function makes the prediction of a dimension from the training data quite simple. For example, the image below shows the x, y, and z axes from the accelerometers and the sleep status (1=awake, 0=asleep). Sub-sampling all 4 dimensions together with a window size of 30 and looking specifically at sleep status per sub-sample will allow for a timer series preciction via an RNN or the LSTM achitecture.
+
+Testing Trained Model on New Subject:
+=====================================
+
+|testing_example|
+
+Sleep Status Prediction Results:
+=================================
+
+|testing_results_example|
+
 Research for Datasets and Ideas
 ===============================
 
@@ -18,6 +33,15 @@ Research ideas will be documented here along with any useful datasets.
 #. `Sleep-Wake Prediction`_
 
     * Sleep / Wake prediction and insomnia predictor using SVM and RF on labeled sleep actigraphy data.
+
+
+.. |testing_example| image:: model_test_subject5005_day7.png
+  :width: 800
+  :alt: Testing Example
+
+.. |testing_results_example| image:: model_test_results_subject5005_day7.png
+  :width: 800
+  :alt: Testing Results Example
 
 .. _Sleep Stage Prediction via Consumer Wearable Device: https://academic.oup.com/sleep/article/42/12/zsz180/5549536
 .. _Sleep-Wake Syndrome in Children from Screen Media Use: https://www.sciencedirect.com/science/article/abs/pii/S2352721820301935?via%3Dihub
