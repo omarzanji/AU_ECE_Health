@@ -151,7 +151,7 @@ class SleepWake:
         subject_number = self.subjects[subject]
 
         fig = plt.figure(1)
-        gs = gridspec.GridSpec(4, 1, height_ratios=[4, 2, 2, 1]) 
+        gs = gridspec.GridSpec(5, 1, height_ratios=[4, 2, 2, 1, 3]) 
 
         ax0 = plt.subplot(gs[0])
         line0, = ax0.plot(self.sleep_time_arr[start:end+1], self.axis1_arr[start:end+1], color='r')
@@ -171,7 +171,14 @@ class SleepWake:
         line3, = ax3.plot(self.sleep_time_arr[start:end+1], self.sleep_status_arr[start:end+1], color='orange')
         plt.ylabel('Sleep\nStatus')
         ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
-                
+
+        self.actigraph = np.array(self.axis1_arr[start:end+1]) + np.array(self.axis2_arr[start:end+1]) + np.array(self.axis3_arr[start:end+1])
+        self.actigraph = (self.actigraph / np.max(self.actigraph)) * 10
+        ax4 = plt.subplot(gs[4], sharex=ax0)
+        line4, = ax4.plot(self.sleep_time_arr[start:end+1], self.actigraph, color='purple')
+        plt.ylabel('Sleep\nStatus')
+        ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
+        ax4.legend((line4,), ('normalized actigraphy',), loc='upper right')   
         plt.subplots_adjust(hspace=.1)
         plt.xticks(np.arange(0, len(self.sleep_time_arr[start:end+1]), 100))
         plt.xlabel('Timestamp')
