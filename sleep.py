@@ -186,5 +186,5 @@ if __name__ == "__main__":
 
     sleep_session = Sleep(SLEEP_EXPORT_PATH)
     sleep_session.organize_by_events()
-    sleep_session.plot_sleep_session(22)
+    sleep_session.plot_sleep_session(10)
     # sleep_session.export_data()
