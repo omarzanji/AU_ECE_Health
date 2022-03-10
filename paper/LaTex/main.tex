@@ -81,10 +81,10 @@ headsepline, % Uncomment to get a line under the header
 
 \subject{Electrical and Computer Engineering} % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
 \keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
-\university{\href{http://www.university.com}{Auburn University}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
-\department{\href{http://department.university.com}{Department of Electrical and Computer Engineering}} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
-\group{\href{http://researchgroup.university.com}{AU ECE Health}} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
-\faculty{\href{http://faculty.university.com}{Samuel Ginn College of Engineering}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
+\university{\href{}{Auburn University}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
+\department{\href{}{Department of Electrical and Computer Engineering}} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+\group{\href{}{AU ECE Health}} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
+\faculty{\href{}{Samuel Ginn College of Engineering}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
 
 \AtBeginDocument{
 \hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
@@ -116,13 +116,13 @@ headsepline, % Uncomment to get a line under the header
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushleft} \large
 \emph{Author:}\\
-\href{http://www.johnsmith.com}{\authorname} % Author name - remove the \href bracket to remove the link
+\href{}{\authorname} % Author name - remove the \href bracket to remove the link
 \end{flushleft}
 \end{minipage}
 \begin{minipage}[t]{0.4\textwidth}
 \begin{flushright} \large
 \emph{Supervisor:} \\
-\href{http://www.jamessmith.com}{\supname} % Supervisor name - remove the \href bracket to remove the link  
+\href{}{\supname} % Supervisor name - remove the \href bracket to remove the link  
 \end{flushright}
 \end{minipage}\\[3cm]
  
@@ -140,6 +140,7 @@ headsepline, % Uncomment to get a line under the header
 \vfill
 \end{center}
 \end{titlepage}
+\let\cleardoublepage\clearpage
 
 %----------------------------------------------------------------------------------------
 %	DECLARATION PAGE
@@ -173,16 +174,16 @@ headsepline, % Uncomment to get a line under the header
 
 \begin{abstract}
 \addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-Sleep is one of the most important functions in the human body. It is also very predictable and has expected patterns that we can model. Sleep activity can be either quiet, non-rapid eye movement (NREM) or active, rapid eye movement (REM) sleep. To capture sleep data, high sensitivity accelerometers can be attached to the wrist and other parts of the body during sleep to capture the predictable movements during NREM/REM. This data is referred to as actigraphy. There are existing models that can automatically label actigraphy data, but there is a lack of models that can accurately predict disorders that affect sleep. In this study, we used datasets on regular sleep activity to train a model that can accurately predict and label sleep/wake from actigraphy. We then created a custom dataset on patients with known disorders that affect sleep, through a mix of public datasets and sleep studies, to add labels for each person's known disorder. With the disorder labels on the actigraphy data, our trained model will be able to predict if a person is healthy or suspect to a disorder. \end{abstract}
+In this study, we used datasets on regular sleep activity to train a model that can accurately predict and label sleep/wake from actigraphy. We then created a custom dataset on patients with known disorders that affect sleep, through a mix of public datasets and sleep studies, to add labels for each person's known disorder. With the disorder labels on the actigraphy data, our trained model will be able to predict if a person is healthy or suspect to a disorder. \end{abstract}
 
 %----------------------------------------------------------------------------------------
 %	ACKNOWLEDGEMENTS
 %----------------------------------------------------------------------------------------
 
-\begin{acknowledgements}
-\addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
-\end{acknowledgements}
+% \begin{acknowledgements}
+% \addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
+% The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
+% \end{acknowledgements}
 
 %----------------------------------------------------------------------------------------
 %	LIST OF CONTENTS/FIGURES/TABLES PAGES
@@ -190,55 +191,55 @@ The acknowledgments and the people to thank go here, don't forget to include you
 
 \tableofcontents % Prints the main table of contents
 
-\listoffigures % Prints the list of figures
+% \listoffigures % Prints the list of figures
 
-\listoftables % Prints the list of tables
+% \listoftables % Prints the list of tables
 
 %----------------------------------------------------------------------------------------
 %	ABBREVIATIONS
 %----------------------------------------------------------------------------------------
 
-\begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+% \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
 
-\textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere\\
-\textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
+% \textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere\\
+% \textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
 
-\end{abbreviations}
+% \end{abbreviations}
 
 %----------------------------------------------------------------------------------------
 %	PHYSICAL CONSTANTS/OTHER DEFINITIONS
 %----------------------------------------------------------------------------------------
 
-\begin{constants}{lr@{${}={}$}l} % The list of physical constants is a three column table
+% \begin{constants}{lr@{${}={}$}l} % The list of physical constants is a three column table
 
-% The \SI{}{} command is provided by the siunitx package, see its documentation for instructions on how to use it
+% % The \SI{}{} command is provided by the siunitx package, see its documentation for instructions on how to use it
 
-Speed of Light & $c_{0}$ & \SI{2.99792458e8}{\meter\per\second} (exact)\\
-%Constant Name & $Symbol$ & $Constant Value$ with units\\
+% Speed of Light & $c_{0}$ & \SI{2.99792458e8}{\meter\per\second} (exact)\\
+% %Constant Name & $Symbol$ & $Constant Value$ with units\\
 
-\end{constants}
+% \end{constants}
 
 %----------------------------------------------------------------------------------------
 %	SYMBOLS
 %----------------------------------------------------------------------------------------
 
-\begin{symbols}{lll} % Include a list of Symbols (a three column table)
+% \begin{symbols}{lll} % Include a list of Symbols (a three column table)
 
-$a$ & distance & \si{\meter} \\
-$P$ & power & \si{\watt} (\si{\joule\per\second}) \\
-%Symbol & Name & Unit \\
+% $a$ & distance & \si{\meter} \\
+% $P$ & power & \si{\watt} (\si{\joule\per\second}) \\
+% %Symbol & Name & Unit \\
 
-\addlinespace % Gap to separate the Roman symbols from the Greek
+% \addlinespace % Gap to separate the Roman symbols from the Greek
 
-$\omega$ & angular frequency & \si{\radian} \\
+% $\omega$ & angular frequency & \si{\radian} \\
 
-\end{symbols}
+% \end{symbols}
 
 %----------------------------------------------------------------------------------------
 %	DEDICATION
 %----------------------------------------------------------------------------------------
 
-\dedicatory{For/Dedicated to/To my\ldots} 
+% \dedicatory{For/Dedicated to/To my\ldots} 
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - CHAPTERS
@@ -252,10 +253,9 @@ $\omega$ & angular frequency & \si{\radian} \\
 % Uncomment the lines as you write the chapters
 
 \include{Chapters/Chapter1}
-%\include{Chapters/Chapter2} 
-%\include{Chapters/Chapter3}
-%\include{Chapters/Chapter4} 
-%\include{Chapters/Chapter5} 
+\include{Chapters/Chapter2} 
+\include{Chapters/Chapter3}
+\include{Chapters/Chapter4} 
 
 %----------------------------------------------------------------------------------------
 %	THESIS CONTENT - APPENDICES
@@ -266,7 +266,7 @@ $\omega$ & angular frequency & \si{\radian} \\
 % Include the appendices of the thesis as separate files from the Appendices folder
 % Uncomment the lines as you write the Appendices
 
-\include{Appendices/AppendixA}
+% \include{Appendices/AppendixA}
 %\include{Appendices/AppendixB}
 %\include{Appendices/AppendixC}
 

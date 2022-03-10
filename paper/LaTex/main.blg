@@ -3,7 +3,9 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: biblatex.bst
 A level-1 auxiliary file: Chapters/Chapter1.aux
-A level-1 auxiliary file: Appendices/AppendixA.aux
+A level-1 auxiliary file: Chapters/Chapter2.aux
+A level-1 auxiliary file: Chapters/Chapter3.aux
+A level-1 auxiliary file: Chapters/Chapter4.aux
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
@@ -24,44 +26,44 @@ Database file #2: example.bib
 Biblatex version: 3.16
 Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 4 entries,
+You've used 1 entry,
             6393 wiz_defined-function locations,
-            1232 strings with 11012 characters,
-and the built_in function-call counts, 25517 in all, are:
-= -- 1848
-> -- 447
-< -- 97
-+ -- 570
-- -- 183
-* -- 2097
-:= -- 2984
+            1205 strings with 9031 characters,
+and the built_in function-call counts, 1522 in all, are:
+= -- 72
+> -- 70
+< -- 1
++ -- 49
+- -- 28
+* -- 31
+:= -- 368
 add.period$ -- 0
-call.type$ -- 4
-change.case$ -- 33
-chr.to.int$ -- 54
-cite$ -- 6
-duplicate$ -- 2226
-empty$ -- 2359
-format.name$ -- 234
-if$ -- 5217
+call.type$ -- 1
+change.case$ -- 0
+chr.to.int$ -- 42
+cite$ -- 0
+duplicate$ -- 11
+empty$ -- 103
+format.name$ -- 0
+if$ -- 322
 int.to.chr$ -- 0
-int.to.str$ -- 6
+int.to.str$ -- 0
 missing$ -- 0
-newline$ -- 153
-num.names$ -- 123
-pop$ -- 1116
+newline$ -- 20
+num.names$ -- 0
+pop$ -- 47
 preamble$ -- 1
-purify$ -- 54
+purify$ -- 0
 quote$ -- 0
-skip$ -- 616
+skip$ -- 77
 stack$ -- 0
-substring$ -- 3725
-swap$ -- 582
-text.length$ -- 118
-text.prefix$ -- 3
+substring$ -- 151
+swap$ -- 1
+text.length$ -- 20
+text.prefix$ -- 0
 top$ -- 1
-type$ -- 124
+type$ -- 22
 warning$ -- 0
-while$ -- 386
+while$ -- 64
 width$ -- 0
-write$ -- 150
+write$ -- 20
