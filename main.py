@@ -8,12 +8,18 @@ import json
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
 import numpy as np
+from sklearn import metrics
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Activation
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 import tensorflow as tf
 from tensorflow import keras
+
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 
 class SleepWake:
 
@@ -22,9 +28,23 @@ class SleepWake:
             self.model = keras.models.load_model(model)
 
 
-    def load_data(self):
-        with open('data/actigraphy.json') as f:
-            self.raw_data = json.load(f)
+    def load_data(self, train=0):
+        x_cache_str = f'type{train}_x.npy'
+        y_cache_str = f'type{train}_y.npy'
+        self.x = []
+        self.y = []
+        if x_cache_str in os.listdir('cache'):
+            print('\n[Found cached processed data! Loading...]')
+            self.x = np.load('cache/'+x_cache_str)
+            self.y = np.load('cache/'+y_cache_str)
+        if train:
+            print('\n[Loading training data...]')
+            with open('data/actigraphy.json') as f:
+                self.raw_data = json.load(f)
+        else: 
+            print('\n[Loading validation data...]')
+            with open('data/validation_actigraphy.json') as f:
+                self.raw_data = json.load(f)
 
         # key = '5001' # add more keys from dataset later...
         # [pid, day, time_hr, sleep_time, lux, sleep_status, axis1, axis2, axis3]
@@ -51,9 +71,18 @@ class SleepWake:
                 self.axis1_arr.append(sample[6])
                 self.axis2_arr.append(sample[7])
                 self.axis3_arr.append(sample[8])
+        print('[Data loaded.]')
+        if train:
+            print(f'Training / Testing Subjects: {self.subjects}\n')
+        else: print(f'Validation Subjects: {self.subjects}\n')
 
+        if len(self.x)==0: self.process_data(train) # No cache found, create X and Y
+        
+    def process_data(self, train=0):
+        x_cache_str = f'type{train}_x.npy'
+        y_cache_str = f'type{train}_y.npy'
 
-    def process_data(self):
+        print('\n[Creating Time-Series X and Y arrays...]\n')
         SEQ = 30
         # STEP = 2
         self.x = []
@@ -72,6 +101,10 @@ class SleepWake:
         self.x = np.array(self.x)
         self.y = np.array(self.y)
 
+        print('\n[Saving X and Y as cache...]')
+        np.save('cache/'+x_cache_str, self.x)
+        np.save('cache/'+y_cache_str, self.y)
+
 
     def create_model(self):
         SEQ= 30
@@ -80,16 +113,37 @@ class SleepWake:
         model.add(Activation('tanh'))
         model.add(Dense(1))
         model.add(Activation('tanh'))
-        model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError())
+        model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
         return model
 
     def train_model(self, model):
-        hist = model.fit(self.x, self.y, epochs=4, verbose=1)
+        print('\n[Training Model...]\n\n')
+        xtrain, xtest, ytrain, ytest = train_test_split(self.x, self.y)
+        hist = model.fit(xtrain, ytrain, epochs=5, verbose=1)
+        self.plot_history(hist)
         model.summary()
+        self.ypreds = model.predict(xtest)
+        accuracy = accuracy_score(ytest, self.ypreds.round())
+        print(f'\nAccuracy: {accuracy}\n')
         model.save('models/sleepwake.model')
-        return hist
+
+    def plot_history(self, history):
+        plt.figure()
+        plt.plot(history.history['loss'])
+        plt.title('Model Training Loss')
+        plt.ylabel('loss')
+        plt.xlabel('epoch')
+        plt.legend(['training loss'], loc='upper right')
+
+        # plt.figure()
+        # plt.plot(history.history['accuracy'])
+        # plt.title('model accuracy')
+        # plt.ylabel('accuracy')
+        # plt.xlabel('epoch')
+        # plt.legend(['train'], loc='upper left')
 
     def generate(self, model, subject=0, day=0):
+        print('\n[Generating...]')
         SEQ=30
         
         ndx_vals = []
@@ -122,7 +176,7 @@ class SleepWake:
         x = np.arange(0,len(test_y_complete))
         subject_number = self.subjects[subject]
 
-        fig = plt.figure(0)
+        fig = plt.figure()
         gs = gridspec.GridSpec(2, 1, height_ratios=[1,1])
 
         ax0 = plt.subplot(gs[0])
@@ -150,13 +204,14 @@ class SleepWake:
 
         subject_number = self.subjects[subject]
 
-        fig = plt.figure(1)
+        fig = plt.figure()
         gs = gridspec.GridSpec(5, 1, height_ratios=[4, 2, 2, 1, 3]) 
 
         ax0 = plt.subplot(gs[0])
         line0, = ax0.plot(self.sleep_time_arr[start:end+1], self.axis1_arr[start:end+1], color='r')
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.title('Sleep Actigraphy Data | Subject %s | Day %d' % (subject_number, day)) 
+
         ax1 = plt.subplot(gs[1], sharex=ax0, sharey=ax0)
         line1, = ax1.plot(self.sleep_time_arr[start:end+1], self.axis2_arr[start:end+1], color='g')
         plt.setp(ax1.get_xticklabels(), visible=False)
@@ -166,38 +221,44 @@ class SleepWake:
         line2, = ax2.plot(self.sleep_time_arr[start:end+1], self.axis3_arr[start:end+1], color='b')
         plt.setp(ax2.get_xticklabels(), visible=False)
         
-
         ax3 = plt.subplot(gs[3], sharex=ax0)
-        line3, = ax3.plot(self.sleep_time_arr[start:end+1], self.sleep_status_arr[start:end+1], color='orange')
+        self.actigraph = np.array(self.axis1_arr[start:end+1]) + np.array(self.axis2_arr[start:end+1]) + np.array(self.axis3_arr[start:end+1])
+        self.actigraph = (self.actigraph / np.max(self.actigraph)) * 10 
+        line3, = ax3.plot(self.sleep_time_arr[start:end+1], self.actigraph, color='purple')
+        plt.setp(ax3.get_xticklabels(), visible=False)
+        plt.ylabel('Actigraphy')
+
+        ax4 = plt.subplot(gs[4], sharex=ax0)
+        line4, = ax4.plot(self.sleep_time_arr[start:end+1], self.sleep_status_arr[start:end+1], color='orange')
         plt.ylabel('Sleep\nStatus')
         ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
 
-        self.actigraph = np.array(self.axis1_arr[start:end+1]) + np.array(self.axis2_arr[start:end+1]) + np.array(self.axis3_arr[start:end+1])
-        self.actigraph = (self.actigraph / np.max(self.actigraph)) * 10
-        ax4 = plt.subplot(gs[4], sharex=ax0)
-        line4, = ax4.plot(self.sleep_time_arr[start:end+1], self.actigraph, color='purple')
-        plt.ylabel('Sleep\nStatus')
-        ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
-        ax4.legend((line4,), ('normalized actigraphy',), loc='upper right')   
+        # plot settings 
+        ax0.legend((line0, line1, line2, line4), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
+        ax3.legend((line3,), ('normalized actigraphy',), loc='upper right')   
         plt.subplots_adjust(hspace=.1)
         plt.xticks(np.arange(0, len(self.sleep_time_arr[start:end+1]), 100))
         plt.xlabel('Timestamp')
         # plt.show()
 
 if __name__ == "__main__":
-    TRAIN = 0
-    if TRAIN:
+    TRAIN = 1 # 0 for testing / 1 for training
+
+    if TRAIN: # Train a new model
         sleepwake = SleepWake()
-        sleepwake.load_data()  
-        # sleepwake.visualize_data(1, 5) # (1, 4) and others like it need to be removed (bad data)
-        sleepwake.process_data()
+
+        sleepwake.load_data(TRAIN) # load training / testing data
+
         model = sleepwake.create_model()
         sleepwake.train_model(model)
-        sleepwake.generate(model, 1, 20)
-    else:
+
+        sleepwake.load_data(train=0) # load validation dataset (add 3 new subjects)
+
+        sleepwake.visualize_data(8, 5) # vizualize expected result
+        sleepwake.generate(model, 8, 5) # generate sleep / wake predictions and plot
+
+    else: # Test validation dataset
         sleepwake = SleepWake('models/sleepwake_sub0-2.model') # model trained on subjects ndx 0-2
-        sleepwake.load_data()
-        # sleepwake.visualize_data(1, 5) # (1, 4) and others like it need to be removed (bad data)
-        sleepwake.process_data()
-        sleepwake.visualize_data(3,7) # visualize new subject's data
-        sleepwake.generate(sleepwake.model, 3, 7) # test model's accuracy on new subject
+        sleepwake.load_data(TRAIN)
+        sleepwake.visualize_data(8,5) # visualize new subject's data
+        # sleepwake.generate(sleepwake.model, 8, 5) # test model's accuracy on new subject

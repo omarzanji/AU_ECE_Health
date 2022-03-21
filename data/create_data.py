@@ -1,6 +1,6 @@
 import pandas as pd
 
-SAMPLES = 30
+SAMPLES = 7
 
 df = pd.read_stata('actigraph_epochs_cleaned.dta')
 
@@ -23,7 +23,7 @@ for x in df.iterrows():
         data[pid].append([pid, day, time_hr, sleep_time, lux, sleep_status, axis1, axis2, axis3])
     else:
         count+=1
-        if count == 5: break
+        if count == SAMPLES: break
         data[pid] = [[pid, day, time_hr, sleep_time, lux, sleep_status, axis1, axis2, axis3]]
 
 

@@ -1,5 +1,4 @@
-\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
-\babel@toc {english}{}
+\babel@toc {english}{}\relax 
 \contentsline {chapter}{Abstract}{ii}{section*.1}%
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.3}%
 \contentsline {section}{\numberline {1.1}Introduction}{1}{section.4}%
