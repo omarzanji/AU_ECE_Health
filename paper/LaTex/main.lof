@@ -1,0 +1,10 @@
+\addvspace {10pt}
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Sleep Actigraphy from the Urban Poor in India\cite {zhang}\cite {bessone}}}{2}{figure.1.1}%
+\contentsline {figure}{\numberline {1.2}{\ignorespaces Sleep as Android Watch Actigraphy}}{3}{figure.1.2}%
+\addvspace {10pt}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces LSTM Model with 256 units for Sleep/Wake Prediction}}{5}{figure.2.1}%
+\addvspace {10pt}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Loss on Model with 256 units for Sleep/Wake Prediction during Training}}{8}{figure.3.1}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Accuracy on Model with 256 units for Sleep/Wake Prediction during Training}}{9}{figure.3.2}%
+\addvspace {10pt}
+\addvspace {10pt}

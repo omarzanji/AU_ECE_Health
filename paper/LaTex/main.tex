@@ -1,281 +1,209 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Sleep Stage Prediction via Deep Learning using Actigraphy Data to Detect Disorders by Modeling Sleep 
-% author: Omar Barazanji
-% date: 3/9/2022
 
+\documentclass[12pt]{report}
+\usepackage{aums}       % For Master's papers
+% \usepackage{auphd}     % For Ph.D.
+%\usepackage{auhonors}  % For honors college
+\usepackage{ulem}       % underlining on style-page; see \normalem below
+\usepackage{url}
+\usepackage{tikz}
+\usepackage{pgf}
+\usepackage[intoc]{nomencl}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\graphicspath{ {./images/} }
+\renewcommand{\nomname}{List of Abbreviations}   	       
+\makenomenclature 
 
-%%%%%%%%&&&&&&& LICENSE %%%%%%%%%%%%%%%%%
-% LaTeX Template 
-% Version 2.5 (27/8/17)
-%
-% This template~ was downloaded from:
-% http://www.LaTeXTemplates.com
-%
-% Version 2.x major modifications by:
-% Vel (vel@latextemplates.com)
-%
-% This template is based on a template by:
-% Steve Gunn (http://users.ecs.soton.ac.uk/srg/softwaretools/document/templates/)
-% Sunil Patel (http://www.sunilpatel.co.uk/thesis-template/)
-%
-% Template license:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% don't forget to run:   makeindex ausample.nlo -s nomencl.ist -o ausample.nls
+%% Also, if 
+% May want theorems numbered by chapter
+% \newtheorem{theorem}{Theorem}[chapter]
 
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
+% Put the title, author, and date in. 
+\title{Sleep Stage Prediction via Deep Learning
+using Actigraphy Data to Detect Disorders
+by Modeling Sleep}
+\author{Omar Barazanji} 
+\date{May 10, 2022} %date of graduation
+\copyrightyear{2022} %copyright year
 
-\documentclass[
-11pt, % The default document font size, options: 10pt, 11pt, 12pt
-%oneside, % Two side (alternating margins) for binding by default, uncomment to switch to one side
-english, % ngerman for German
-singlespacing, % Single line spacing, alternatives: onehalfspacing or doublespacing
-%draft, % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
-%nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
-%liststotoc, % Uncomment to add the list of figures/tables/etc to the table of contents
-%toctotoc, % Uncomment to add the main table of contents to the table of contents
-%parskip, % Uncomment to add space between paragraphs
-%nohyperref, % Uncomment to not load the hyperref package
-headsepline, % Uncomment to get a line under the header
-%chapterinoneline, % Uncomment to place the chapter title next to the number on one line
-%consistentlayout, % Uncomment to change the layout of the declaration, abstract and acknowledgements pages to match the default layout
-]{MastersDoctoralThesis} % The class file specifying the document structure
+\keywords{Deep Learning, Time-Series Forecasting, Health, Sleep}
 
-\usepackage[utf8]{inputenc} % Required for inputting international characters
-\usepackage[T1]{fontenc} % Output font encoding for international characters
+% Put the Thesis Adviser here. 
+\adviser{SueAnne Griffith}
 
-\usepackage{mathpazo} % Use the Palatino font by default
+% Put the committee here (including the adviser), one \professor for each. 
+% The advisor must be first, and the dean of the graduate school must be last.
+% \professor{Thaddeus Roppel, Chair, Associate Professor of Electrical and Computer Engineering}
 
-\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex} % Use the bibtex backend with the authoryear citation style (which resembles APA)
+% \professor{Prathima Agrawal, Ginn Distinguished Professor of Electrical and Computer Engineering}
 
-\addbibresource{example.bib} % The filename of the bibliography
-
-\usepackage[autostyle=true]{csquotes} % Required to generate language-dependent quotes in the bibliography
-
-%----------------------------------------------------------------------------------------
-%	MARGIN SETTINGS
-%----------------------------------------------------------------------------------------
-
-\geometry{
-	paper=a4paper, % Change to letterpaper for US letter
-	inner=2.5cm, % Inner margin
-	outer=3.8cm, % Outer margin
-	bindingoffset=.5cm, % Binding offset
-	top=1.5cm, % Top margin
-	bottom=1.5cm, % Bottom margin
-	%showframe, % Uncomment to show how the type block is set on the page
-}
-
-%----------------------------------------------------------------------------------------
-%	THESIS INFORMATION
-%----------------------------------------------------------------------------------------
-
-\thesistitle{Sleep Stage Prediction via Deep Learning using Actigraphy Data to Detect Disorders by Modeling Sleep } % Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
-\supervisor{Dr. SueAnne Griffith} % Your supervisor's name, this is used in the title page, print it elsewhere with \supname
-\examiner{} % Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
-\degree{Masters} % Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
-\author{Omar Barazanji} % Your name, this is used in the title page and abstract, print it elsewhere with \authorname
-\addresses{} % Your address, this is not currently used anywhere in the template, print it elsewhere with \addressname
-
-\subject{Electrical and Computer Engineering} % Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
-\keywords{} % Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
-\university{\href{}{Auburn University}} % Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
-\department{\href{}{Department of Electrical and Computer Engineering}} % Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
-\group{\href{}{AU ECE Health}} % Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
-\faculty{\href{}{Samuel Ginn College of Engineering}} % Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
-
-\AtBeginDocument{
-\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
-\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
-\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
-}
+\professor{SueAnne Griffith, Professor of Electrical and Computer Engineering}
 
 \begin{document}
 
-\frontmatter % Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+\begin{romanpages}      % roman-numbered pages 
 
-\pagestyle{plain} % Default to the plain heading style until the thesis style is called for the body content
+\TitlePage 
 
-%----------------------------------------------------------------------------------------
-%	TITLE PAGE
-%----------------------------------------------------------------------------------------
+\begin{abstract} 
+  In this study, we use datasets \cite{zhang}\cite{bessone} on regular sleep activity to train a model that can accurately predict and label sleep/wake from actigraphy. We created a
+  custom dataset on patients with known disorders that affect sleep, through a mix of
+  public datasets and sleep studies, to add labels for each person’s known disorder.
+  With the disorder labels on the actigraphy data, our trained model will be able to
+  predict if a person is healthy or shows behaviors similar to a known disorder.
+\end{abstract}
 
-\begin{titlepage}
-\begin{center}
+\begin{acknowledgments}
+  The National Sleep Research Resource was supported by the U.S. National Institutes of Health, National Heart Lung and Blood Institute (R24 HL114473, 75N92019R002).
+\end{acknowledgments}
 
-\vspace*{.06\textheight}
-{\scshape\LARGE \univname\par}\vspace{1.5cm} % University name
-\textsc{\Large Masters Thesis}\\[0.5cm] % Thesis type
+\tableofcontents
+\listoffigures
+% \listoftables
 
-\HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries \ttitle\par}\vspace{0.4cm} % Thesis title
-\HRule \\[1.5cm] % Horizontal line
- 
-\begin{minipage}[t]{0.4\textwidth}
-\begin{flushleft} \large
-\emph{Author:}\\
-\href{}{\authorname} % Author name - remove the \href bracket to remove the link
-\end{flushleft}
-\end{minipage}
-\begin{minipage}[t]{0.4\textwidth}
-\begin{flushright} \large
-\emph{Supervisor:} \\
-\href{}{\supname} % Supervisor name - remove the \href bracket to remove the link  
-\end{flushright}
-\end{minipage}\\[3cm]
- 
-\vfill
+\printnomenclature[0.5in] %used for the List of Abbreviations
+\end{romanpages}        % All done with roman-numbered pages
 
-\large \textit{A thesis submitted in fulfillment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
-\textit{in the}\\[0.4cm]
-\groupname\\\deptname\\[2cm] % Research group name and department name
- 
-\vfill
 
-{\large \today}\\[4cm] % Date
-%\includegraphics{Logo} % University/department logo - uncomment to place it
- 
-\vfill
-\end{center}
-\end{titlepage}
-\let\cleardoublepage\clearpage
+\normalem       % Make italics the default for \em
 
-%----------------------------------------------------------------------------------------
-%	DECLARATION PAGE
-%----------------------------------------------------------------------------------------
 
-% \begin{declaration}
-% \addchaptertocentry{\authorshipname} % Add the declaration to the table of contents
-% \noindent I, \authorname, declare that this thesis titled, \enquote{\ttitle} and the work presented in it are my own. I confirm that:
+\chapter{Introduction}
 
-% \begin{itemize} 
-% \item This work was done wholly or mainly while in candidature for a research degree at this University.
-% \item Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
-% \item Where I have consulted the published work of others, this is always clearly attributed.
-% \item Where I have quoted from the work of others, the source is always given. With the exception of such quotations, this thesis is entirely my own work.
-% \item I have acknowledged all main sources of help.
-% \item Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
-% \end{itemize}
- 
-% \noindent Signed:\\
-% \rule[0.5em]{25em}{0.5pt} % This prints a line for the signature
- 
-% \noindent Date:\\
-% \rule[0.5em]{25em}{0.5pt} % This prints a line to write the date
-% \end{declaration}
+Sleep is one of the most important functions in the human body. It is also very predictable and has expected patterns that we can model. Sleep activity can be either quiet, non-rapid eye movement (NREM) or active, rapid eye movement (REM) sleep. To capture sleep data, high sensitivity accelerometers can be attached to the wrist and other parts of the body during sleep to capture the predictable movements during NREM/REM. This data is referred to as actigraphy. There are existing models that can automatically label actigraphy data, but there is a lack of models that can accurately predict disorders that affect sleep. 
 
-% \cleardoublepage
+\section{Objective}
 
-%----------------------------------------------------------------------------------------
-%	ABSTRACT PAGE
-%----------------------------------------------------------------------------------------
+In this study, we used datasets on regular sleep activity to train a model that can accurately predict and label sleep/wake from actigraphy. We then will create a custom dataset on patients with known disorders that affect sleep. Through a mix of public datasets and sleep studies, we can add labels for each person's known disorder. With the disorder labels on the actigraphy data, our trained model will be able to predict if a person might have certain disorders or not, such as Sleep Apnea.
 
-\begin{abstract}
-\addchaptertocentry{\abstractname} % Add the abstract to the table of contents
-In this study, we used datasets on regular sleep activity to train a model that can accurately predict and label sleep/wake from actigraphy. We then created a custom dataset on patients with known disorders that affect sleep, through a mix of public datasets and sleep studies, to add labels for each person's known disorder. With the disorder labels on the actigraphy data, our trained model will be able to predict if a person is healthy or suspect to a disorder. \end{abstract}
+\section{Datasets}
 
-%----------------------------------------------------------------------------------------
-%	ACKNOWLEDGEMENTS
-%----------------------------------------------------------------------------------------
+We used various datasets in this study and will be referenced throughout the paper. The first dataset is Sleep Actigraphy from the Urban Poor in India, and it contains 3-axis accelerometer data from 30 participants.Data is labeled with sleep status, either a 1 or a 0 for asleep or awake, respectively. The other dataset comes from Sleep as Android Watch Actigraphy. This dataset contains labels for sleep stages as well as lux (light in lumens), snoring, bpm, and more. Data is collected from a compatible Wear OS device during sleep and is converted into a single actigraphy curve for sleep stage prediction.
 
-% \begin{acknowledgements}
-% \addchaptertocentry{\acknowledgementname} % Add the acknowledgements to the table of contents
-% The acknowledgments and the people to thank go here, don't forget to include your project advisor\ldots
-% \end{acknowledgements}
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=1\linewidth]{model_test_subject5005_day7}
+    \caption{Sleep Actigraphy from the Urban Poor in India\cite{zhang}\cite{bessone}}
+    \label{urban-poor}
+  \end{center}
+\end{figure}
 
-%----------------------------------------------------------------------------------------
-%	LIST OF CONTENTS/FIGURES/TABLES PAGES
-%----------------------------------------------------------------------------------------
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=1\linewidth]{REM_NREM_labels}
+    \caption{Sleep as Android Watch Actigraphy}
+    \label{sleep-android}
+  \end{center}
+\end{figure}
 
-\tableofcontents % Prints the main table of contents
+\chapter{Methods}
 
-% \listoffigures % Prints the list of figures
+We present various methods for sleep/wake prediction, sleep stage prediction, and disorder prediction. We explore popular known methods using XGBoost, SVM, and RNN model architectures. In this paper we propose a new method for sleep-stage classification and sleep/wake classification. Our baseline method will be the vanilla LSTM and we will compare this against our newly proposed methods using the Transformer architecture and another model using a Bidirectional LSTM. 
 
-% \listoftables % Prints the list of tables
+\section{Sleep/Wake Prediction}
+Recurrent Neural Networks (RNNs) are a special type of neural network that are designed to process long sequences of data and predict how a series of data should continue per time step. The Long Short-Term Memory (LSTM) network is a refined version of the vanilla RNN that can "forget" useless information in training data. This prevents the network from overfitting, which is a big problem in the vanilla RNN. Looking at sleep actigraphy data as a time series problem makes the prediction of any label from the training data quite simple. For example, figure \ref{urban-poor} above shows the x, y, and z activity data from the accelerometers on a participant's wrist, and the sleep status (1=asleep, 0=awake) shows when the person is asleep or awake in time with the accelerometer. We can sub-sample all 4 labels together with a window size of T, usually around T=30, and predict sleep status or anyother variable that was recorded along with the accelerometer per time step. 
 
-%----------------------------------------------------------------------------------------
-%	ABBREVIATIONS
-%----------------------------------------------------------------------------------------
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{sleep_status_LSTM_model}
+    \caption{LSTM Model with 256 units for Sleep/Wake Prediction}
+    \label{lstm-architecture}
+  \end{center}
+\end{figure}
 
-% \begin{abbreviations}{ll} % Include a list of abbreviations (a table of two columns)
+\section{Sleep Stage Prediction}
+To classify sleep stages as multiple labels during sleep from actigraphy data, we will need to use a multi-variate LSTM that can output more than one label per time step. To do this we will update our vanilla LSTM model's output Y from figure \ref{lstm-architecture} to have a dimension equal to the number of desired sleep stage labels. For our dataset shown in \ref{sleep-android}, we can predict light, deep, and REM sleep stages. We can also add sleep/wake from the Sleep as Android dataset to have a total of 4 output labels per timestep. 
 
-% \textbf{LAH} & \textbf{L}ist \textbf{A}bbreviations \textbf{H}ere\\
-% \textbf{WSF} & \textbf{W}hat (it) \textbf{S}tands \textbf{F}or\\
+\section{Disorder Prediction}
+Need to add...
 
-% \end{abbreviations}
+\chapter{Results}
 
-%----------------------------------------------------------------------------------------
-%	PHYSICAL CONSTANTS/OTHER DEFINITIONS
-%----------------------------------------------------------------------------------------
+Results for sleep/wake predcition using the LSTM network with 256 units can be seen below in figures \ref{lstm-loss} and \ref{lstm-accuracy}. The model performs at 92 percent accuracy with 256 units and 15 training epochs. 
 
-% \begin{constants}{lr@{${}={}$}l} % The list of physical constants is a three column table
+\section{Sleep/Wake Results}
+Need to add...
 
-% % The \SI{}{} command is provided by the siunitx package, see its documentation for instructions on how to use it
+\subsection{XGBoost}
+Need to add...
 
-% Speed of Light & $c_{0}$ & \SI{2.99792458e8}{\meter\per\second} (exact)\\
-% %Constant Name & $Symbol$ & $Constant Value$ with units\\
+\subsection{SVM}
+Need to add...
 
-% \end{constants}
+\subsection{LSTM}
+Need to add...
 
-%----------------------------------------------------------------------------------------
-%	SYMBOLS
-%----------------------------------------------------------------------------------------
+\subsection{Transformer}
+Need to add...
 
-% \begin{symbols}{lll} % Include a list of Symbols (a three column table)
+\section{Sleep Stage Results}
+Need to add...
 
-% $a$ & distance & \si{\meter} \\
-% $P$ & power & \si{\watt} (\si{\joule\per\second}) \\
-% %Symbol & Name & Unit \\
+\subsection{XGBoost}
+Need to add...
 
-% \addlinespace % Gap to separate the Roman symbols from the Greek
+\subsection{SVM}
+Need to add...
 
-% $\omega$ & angular frequency & \si{\radian} \\
+\subsection{LSTM}
+Need to add...
 
-% \end{symbols}
+\subsection{Transformer}
+Need to add...
 
-%----------------------------------------------------------------------------------------
-%	DEDICATION
-%----------------------------------------------------------------------------------------
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\linewidth]{param_sweep_loss}
+    \caption{Loss on Model with 256 units for Sleep/Wake Prediction during Training}
+    \label{lstm-loss}
+  \end{center}
+\end{figure}
 
-% \dedicatory{For/Dedicated to/To my\ldots} 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.9\linewidth]{param_sweep_accuracy}
+    \caption{Accuracy on Model with 256 units for Sleep/Wake Prediction during Training}
+    \label{lstm-accuracy}
+  \end{center}
+\end{figure}
 
-%----------------------------------------------------------------------------------------
-%	THESIS CONTENT - CHAPTERS
-%----------------------------------------------------------------------------------------
+\chapter{Conclusion}
+Need to add...
 
-\mainmatter % Begin numeric (1,2,3...) page numbering
+\section{Discussion}
+Need to add...
 
-\pagestyle{thesis} % Return the page headers back to the "thesis" style
+\section{Conclusion}
+Need to add...
 
-% Include the chapters of the thesis as separate files from the Chapters folder
-% Uncomment the lines as you write the chapters
+\begin{thebibliography}{99}
+\newcommand{\AmS}{$${\protect\the\textfont2 A}\kern-.1667em\lower
+         .5ex\hbox{\protect\the\textfont2 M}\kern
+         -.125em{\protect\the\textfont2 S}}
 
-\include{Chapters/Chapter1}
-\include{Chapters/Chapter2} 
-\include{Chapters/Chapter3}
-\include{Chapters/Chapter4} 
+\bibitem{zhang} Zhang GQ, Cui L, Mueller R, Tao S, Kim M, Rueschman M, Mariani S, Mobley D, Redline S. The National Sleep Research Resource: towards a sleep data commons. J Am Med Inform Assoc. 2018 Oct 1;25(10):1351-1358. doi: 10.1093/jamia/ocy064. PMID: 29860441; PMCID: PMC6188513.
 
-%----------------------------------------------------------------------------------------
-%	THESIS CONTENT - APPENDICES
-%----------------------------------------------------------------------------------------
+\bibitem{bessone} 
+Bessone P, Rao G, Schilbach F, Schofield H, Toma M. The Economic Consequences of Increasing Sleep Among the Urban Poor. Q J Econ. 2021 Apr 8;136(3):1887-1941. doi: 10.1093/qje/qjab013. PMID: 34220361; PMCID: PMC8242594.
 
-\appendix % Cue to tell LaTeX that the following "chapters" are Appendices
+\bibitem{sano}
+A. Sano, W. Chen, D. Lopez-Martinez, S. Taylor and R. W. Picard, "Multimodal Ambulatory Sleep Detection Using LSTM Recurrent Neural Networks," in IEEE Journal of Biomedical and Health Informatics, vol. 23, no. 4, pp. 1607-1617, July 2019, doi:10.1109/JBHI.2018.2867619.
 
-% Include the appendices of the thesis as separate files from the Appendices folder
-% Uncomment the lines as you write the Appendices
+\bibitem{sathyanarayana} 
+Sathyanarayana, Aartietal. “Sleep Quality Prediction From Wearable Data Using Deep Learning.” JMIR mHealth and uHealth vol. 4, 4e125.4Nov.2016, doi:10.2196/mhealth.6562.
 
-% \include{Appendices/AppendixA}
-%\include{Appendices/AppendixB}
-%\include{Appendices/AppendixC}
+\end{thebibliography}
 
-%----------------------------------------------------------------------------------------
-%	BIBLIOGRAPHY
-%----------------------------------------------------------------------------------------
 
-\printbibliography[heading=bibintoc]
 
-%----------------------------------------------------------------------------------------
+\appendix
+\chapter*{Appendices\addcontentsline{toc}{chapter}{Appendices}}
 
-\end{document}  
+\chapter{Source Code}
+
+\begin{singlespace}
+Code link
+\end{singlespace}
+
+\end{document}
