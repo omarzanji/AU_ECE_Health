@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2022.3.13)  16 MAY 2022 17:36
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (TeX Live 2021/W32TeX) (preloaded format=pdflatex 2022.3.13)  25 MAY 2022 14:58
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -484,26 +484,26 @@ No file main.nls.
 
 ]
 Chapter 1.
-<./images//model_test_subject5005_day7.png, id=185, 836.1639pt x 571.6557pt>
-File: ./images//model_test_subject5005_day7.png Graphic file (type png)
-<use ./images//model_test_subject5005_day7.png>
-Package pdftex.def Info: ./images//model_test_subject5005_day7.png  used on input line 86.
-(pdftex.def)             Requested size: 469.75499pt x 321.15428pt.
 [1
 
 
-]
-<./images//REM_NREM_labels.png, id=194, 801.4743pt x 361.35pt>
+] [2]
+<./images//model_test_subject5005_day7.png, id=204, 836.1639pt x 571.6557pt>
+File: ./images//model_test_subject5005_day7.png Graphic file (type png)
+<use ./images//model_test_subject5005_day7.png>
+Package pdftex.def Info: ./images//model_test_subject5005_day7.png  used on input line 96.
+(pdftex.def)             Requested size: 469.75499pt x 321.15428pt.
+<./images//REM_NREM_labels.png, id=208, 801.4743pt x 361.35pt>
 File: ./images//REM_NREM_labels.png Graphic file (type png)
 <use ./images//REM_NREM_labels.png>
-Package pdftex.def Info: ./images//REM_NREM_labels.png  used on input line 94.
+Package pdftex.def Info: ./images//REM_NREM_labels.png  used on input line 104.
 (pdftex.def)             Requested size: 469.75499pt x 211.78865pt.
- [2 <./images//model_test_subject5005_day7.png>] [3 <./images//REM_NREM_labels.png>]
+ [3 <./images//model_test_subject5005_day7.png> <./images//REM_NREM_labels.png>]
 Chapter 2.
-<./images//sleep_status_LSTM_model.png, id=206, 452.69125pt x 302.12875pt>
+<./images//sleep_status_LSTM_model.png, id=216, 452.69125pt x 302.12875pt>
 File: ./images//sleep_status_LSTM_model.png Graphic file (type png)
 <use ./images//sleep_status_LSTM_model.png>
-Package pdftex.def Info: ./images//sleep_status_LSTM_model.png  used on input line 109.
+Package pdftex.def Info: ./images//sleep_status_LSTM_model.png  used on input line 119.
 (pdftex.def)             Requested size: 328.82706pt x 219.45955pt.
 [4
 
@@ -512,27 +512,27 @@ Chapter 3.
 [6
 
 ]
-<./images//param_sweep_loss.png, id=224, 609.2361pt x 486.3771pt>
+<./images//param_sweep_loss.png, id=234, 609.2361pt x 486.3771pt>
 File: ./images//param_sweep_loss.png Graphic file (type png)
 <use ./images//param_sweep_loss.png>
-Package pdftex.def Info: ./images//param_sweep_loss.png  used on input line 157.
+Package pdftex.def Info: ./images//param_sweep_loss.png  used on input line 167.
 (pdftex.def)             Requested size: 422.77661pt x 337.52274pt.
-<./images//param_sweep_accuracy.png, id=225, 620.7993pt x 487.0998pt>
+<./images//param_sweep_accuracy.png, id=235, 620.7993pt x 487.0998pt>
 File: ./images//param_sweep_accuracy.png Graphic file (type png)
 <use ./images//param_sweep_accuracy.png>
-Package pdftex.def Info: ./images//param_sweep_accuracy.png  used on input line 165.
+Package pdftex.def Info: ./images//param_sweep_accuracy.png  used on input line 175.
 (pdftex.def)             Requested size: 422.77661pt x 331.72888pt.
  [7] [8 <./images//param_sweep_loss.png>] [9 <./images//param_sweep_accuracy.png>]
 Chapter 4.
 [10
 
 ]
-Underfull \hbox (badness 1371) in paragraph at lines 194--195
+Underfull \hbox (badness 1371) in paragraph at lines 204--205
 []\OT1/cmr/m/n/12 Sathyanarayana, Aar-ti-etal. \Sleep Qual-ity Pre-dic-tion From Wear-able Data Us-
  []
 
 
-Underfull \hbox (badness 4621) in paragraph at lines 194--195
+Underfull \hbox (badness 4621) in paragraph at lines 204--205
 \OT1/cmr/m/n/12 ing Deep Learn-ing." JMIR mHealth and uHealth vol. 4, 4e125.4Nov.2016,
  []
 
@@ -548,21 +548,21 @@ Appendix A.
 AED: lastpage setting LastPage
 (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: DCAE34E11C1982DD178352CC03D53CD2;2922.
+(rerunfilecheck)             Checksum: 50AA09DA599494339D4DD714A111C3CB;3469.
  ) 
 Here is how much of TeX's memory you used:
- 20068 strings out of 478276
- 381720 string characters out of 5850489
- 688594 words of memory out of 5000000
- 37879 multiletter control sequences out of 15000+600000
+ 20072 strings out of 478276
+ 381788 string characters out of 5850489
+ 688597 words of memory out of 5000000
+ 37881 multiletter control sequences out of 15000+600000
  472408 words of font info for 39 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 110i,6n,106p,1060b,396s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 110i,6n,106p,1060b,402s stack positions out of 5000i,500n,10000p,200000b,80000s
 <c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-Output written on main.pdf (19 pages, 431644 bytes).
+Output written on main.pdf (19 pages, 432431 bytes).
 PDF statistics:
- 287 PDF objects out of 1000 (max. 8388607)
- 249 compressed objects within 3 object streams
- 55 named destinations out of 1000 (max. 500000)
- 254 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 297 PDF objects out of 1000 (max. 8388607)
+ 259 compressed objects within 3 object streams
+ 57 named destinations out of 1000 (max. 500000)
+ 270 words of extra memory for PDF output out of 10000 (max. 10000000)
 
