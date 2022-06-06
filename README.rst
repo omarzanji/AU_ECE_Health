@@ -34,6 +34,9 @@ Research ideas will be documented here along with any useful datasets.
 
     * Sleep / Wake prediction and insomnia predictor using SVM and RF on labeled sleep actigraphy data.
 
+#. `Sleep Stage Time Series via Deep Learning`_
+
+    * Scores AASM's 5 key sleep stages using time-series Conv2D network. Datasets are publicly available.
 
 .. |testing_example| image:: model_test_subject5005_day7.png
   :width: 800
@@ -43,6 +46,7 @@ Research ideas will be documented here along with any useful datasets.
   :width: 800
   :alt: Testing Results Example
 
+.. _Sleep Stage Time Series via Deep Learning: https://arxiv.org/abs/1707.03321
 .. _Sleep Stage Prediction via Consumer Wearable Device: https://academic.oup.com/sleep/article/42/12/zsz180/5549536
 .. _Sleep-Wake Syndrome in Children from Screen Media Use: https://www.sciencedirect.com/science/article/abs/pii/S2352721820301935?via%3Dihub
 .. _PSG vs. Actigraphy: https://sleep.urbandroid.org/sleep-lab-comparison/
