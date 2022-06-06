@@ -1,7 +1,9 @@
 '''
-Predicts sleep / awake from actigraphy data + a few other models.
+Predicts sleep / awake from actigraphy data using time-series forecasting.
 
 author: Omar Barazanji
+date: 3/21/2022
+organizaion: Auburn University ECE
 '''
 
 import json 
@@ -11,7 +13,7 @@ import numpy as np
 from sklearn import metrics
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Activation
+from tensorflow.keras.layers import LSTM, Dense, Activation, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import tensorflow as tf
@@ -20,8 +22,14 @@ from tensorflow import keras
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
+SEQ = 10
 
 class SleepWake:
+    """
+    Creates and trains LSTM sleep / wake prediction models and plots results. 
+    Model is saved to models/ as a Tensorflow / Keras .model file. Data 
+    is cached with type=0 (training data) and type=1 (validation data). 
+    """
 
     def __init__(self, model=''):
         if not model == '':
@@ -29,8 +37,8 @@ class SleepWake:
 
 
     def load_data(self, train=0):
-        x_cache_str = f'type{train}_x.npy'
-        y_cache_str = f'type{train}_y.npy'
+        x_cache_str = f'type{train}_SEQ{SEQ}_x.npy'
+        y_cache_str = f'type{train}_SEQ{SEQ}_y.npy'
         self.x = []
         self.y = []
         if x_cache_str in os.listdir('cache'):
@@ -78,12 +86,13 @@ class SleepWake:
 
         if len(self.x)==0: self.process_data(train) # No cache found, create X and Y
         
+
     def process_data(self, train=0):
-        x_cache_str = f'type{train}_x.npy'
-        y_cache_str = f'type{train}_y.npy'
+        x_cache_str = f'type{train}_SEQ{SEQ}_x.npy'
+        y_cache_str = f'type{train}_SEQ{SEQ}_y.npy'
 
         print('\n[Creating Time-Series X and Y arrays...]\n')
-        SEQ = 30
+        
         # STEP = 2
         self.x = []
         self.y = []
@@ -106,26 +115,64 @@ class SleepWake:
         np.save('cache/'+y_cache_str, self.y)
 
 
-    def create_model(self):
-        SEQ= 30
+    def create_model(self, units=256):
+        """
+        Create LSTM model with relu activation and MSE loss.
+        """
         model = Sequential()
-        model.add(LSTM(SEQ, input_shape=(3,SEQ)))
-        model.add(Activation('tanh'))
+        model.add(LSTM(units, input_shape=(3,SEQ)))
+        model.add(Activation('relu'))
         model.add(Dense(1))
-        model.add(Activation('tanh'))
+        model.add(Activation('relu'))
         model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
         return model
 
-    def train_model(self, model):
+
+    def train_model(self, model, epochs=5):
+        """
+        Train model with optimal parameters.
+        params: 
+            save: 1 to save, 0 to just run.
+        """
         print('\n[Training Model...]\n\n')
         xtrain, xtest, ytrain, ytest = train_test_split(self.x, self.y)
-        hist = model.fit(xtrain, ytrain, epochs=5, verbose=1)
-        self.plot_history(hist)
+        self.hist = model.fit(xtrain, ytrain, epochs=epochs, verbose=1)
+        self.plot_history(self.hist)
         model.summary()
         self.ypreds = model.predict(xtest)
         accuracy = accuracy_score(ytest, self.ypreds.round())
         print(f'\nAccuracy: {accuracy}\n')
         model.save('models/sleepwake.model')
+
+
+    def train_model_sweep(self):
+        """
+        Test different model parameters to know how to fine-tune accuracy.
+        """
+        print('\n[Starting Parameter Sweep...]\n\n')
+
+        units_ = [64, 128, 256, 512]
+        epochs_ = [2, 5, 10, 15]
+        xtrain, xtest, ytrain, ytest = train_test_split(self.x, self.y)
+
+        sweep_dict = {}
+        for i in range(len(units_)):
+            for w in range(len(epochs_)):
+                units,epochs = units_[i], epochs_[w]
+                print(f'\n[Training with {units} units and {epochs} epoch(s)]\n')
+                model = self.create_model(units)
+                self.hist = model.fit(xtrain, ytrain, epochs=epochs, verbose=1)
+                self.ypreds = model.predict(xtest)
+                accuracy = accuracy_score(ytest, self.ypreds.round())
+                sweep_dict[str((units,epochs))] = [self.hist, accuracy]
+
+        keys = sweep_dict.keys()
+        self.sweep_dict = {}
+        for key in keys:
+            hist = sweep_dict[key][0].history
+            self.sweep_dict[str(key)] = {"loss": hist['loss'], "accuracy": hist['accuracy']}
+        with open('param_sweep.json', 'w') as f:
+            json.dump(sweep_dict, f)
 
     def plot_history(self, history):
         plt.figure()
@@ -144,7 +191,6 @@ class SleepWake:
 
     def generate(self, model, subject=0, day=0):
         print('\n[Generating...]')
-        SEQ=30
         
         ndx_vals = []
         for ndx,sample_day in enumerate(self.day_arr):
@@ -241,10 +287,33 @@ class SleepWake:
         plt.xlabel('Timestamp')
         # plt.show()
 
-if __name__ == "__main__":
-    TRAIN = 1 # 0 for testing / 1 for training
+    def plot_param_sweep(self):
+        with open('param_sweep.json', 'r') as f:
+            param_sweep = json.load(f)
+        plt.figure()
+        for key in param_sweep.keys():
+            plt.plot(param_sweep[key]['loss'], label=key+' loss')
+        plt.ylabel('loss')
+        plt.xlabel('epochs')
+        plt.title('Param Sweep on Sleepwake LSTM Model')
+        plt.yscale('log')
+        plt.legend()
 
-    if TRAIN: # Train a new model
+        plt.figure()
+        for key in param_sweep.keys():
+            plt.plot(param_sweep[key]['accuracy'], label=key+' accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epochs')
+        plt.title('Param Sweep on Sleepwake LSTM Model')
+        plt.yscale('log')
+        plt.legend()
+
+        plt.show()
+            
+if __name__ == "__main__":
+    TRAIN = 3 # 0 for testing / 1 for training / 2 for param sweep analysis
+
+    if TRAIN == 1: # Train a new model
         sleepwake = SleepWake()
 
         sleepwake.load_data(TRAIN) # load training / testing data
@@ -257,8 +326,21 @@ if __name__ == "__main__":
         sleepwake.visualize_data(8, 5) # vizualize expected result
         sleepwake.generate(model, 8, 5) # generate sleep / wake predictions and plot
 
-    else: # Test validation dataset
-        sleepwake = SleepWake('models/sleepwake_sub0-2.model') # model trained on subjects ndx 0-2
+    elif TRAIN == 0: # Test validation dataset
+        sleepwake = SleepWake(model='models/sleepwake.model') # model trained on subjects ndx 0-5
         sleepwake.load_data(TRAIN)
         sleepwake.visualize_data(8,5) # visualize new subject's data
-        # sleepwake.generate(sleepwake.model, 8, 5) # test model's accuracy on new subject
+        sleepwake.generate(sleepwake.model, 8, 5) # test model's accuracy on new subject
+
+    elif TRAIN == 2:
+        sleepwake = SleepWake()
+        sleepwake.load_data(train=1) # load training / testing data
+
+        sleepwake.train_model_sweep()
+
+    elif TRAIN == 3:
+        sleepwake = SleepWake()
+        sleepwake.plot_param_sweep()
+
+    else:
+        print('not a valid mode')
