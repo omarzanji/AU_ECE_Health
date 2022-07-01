@@ -37,6 +37,10 @@ Research ideas will be documented here along with any useful datasets.
 #. `Sleep Stage Time Series via Deep Learning`_
 
     * Scores AASM's 5 key sleep stages using time-series Conv2D network. Datasets are publicly available.
+ 
+#. `CNN-LSTM Sleep-Wake Prediction`_
+
+    * DeepActi-Net CNN-LSTM model on sleep / wake classification.
 
 .. |testing_example| image:: model_test_subject5005_day7.png
   :width: 800
@@ -51,3 +55,4 @@ Research ideas will be documented here along with any useful datasets.
 .. _Sleep-Wake Syndrome in Children from Screen Media Use: https://www.sciencedirect.com/science/article/abs/pii/S2352721820301935?via%3Dihub
 .. _PSG vs. Actigraphy: https://sleep.urbandroid.org/sleep-lab-comparison/
 .. _Sleep-Wake Prediction: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8206690/
+.. _CNN-LSTM Sleep-Wake Prediction: https://www.mdpi.com/2079-9292/8/12/1461

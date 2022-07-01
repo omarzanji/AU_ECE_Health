@@ -33,18 +33,22 @@ class SleepWake:
 
     def __init__(self, model=''):
         if not model == '':
-            self.model = keras.models.load_model(model)
-
+            self.model = keras.models.load_model(model)        
 
     def load_data(self, train=0):
+
         x_cache_str = f'type{train}_SEQ{SEQ}_x.npy'
         y_cache_str = f'type{train}_SEQ{SEQ}_y.npy'
         self.x = []
         self.y = []
-        if x_cache_str in os.listdir('cache'):
-            print('\n[Found cached processed data! Loading...]')
-            self.x = np.load('cache/'+x_cache_str)
-            self.y = np.load('cache/'+y_cache_str)
+        try:
+            if x_cache_str in os.listdir('cache'):
+                print('\n[Found cached processed data! Loading...]')
+                self.x = np.load('cache/'+x_cache_str)
+                self.y = np.load('cache/'+y_cache_str)
+        except:
+            print('Creating cache folder...')
+            os.mkdir('cache')
         if train:
             print('\n[Loading training data...]')
             with open('data/actigraphy.json') as f:
@@ -93,6 +97,8 @@ class SleepWake:
 
         print('\n[Creating Time-Series X and Y arrays...]\n')
         
+        # NEED TO ADD VARIABLE AXIS DIM (for sleep as android: 1d actigraphy...)
+
         # STEP = 2
         self.x = []
         self.y = []
@@ -102,6 +108,8 @@ class SleepWake:
                 axis2_series = self.axis2_arr[ndx : ndx+SEQ]
                 axis3_series = self.axis3_arr[ndx : ndx+SEQ]
                 series = [axis1_series, axis2_series, axis3_series]
+
+                # NEED TO ADD VARIABLE LABEL DIM (for sleep as android: 3d labels...)
                 label = self.sleep_status_arr[ndx+SEQ]
                 self.x.append(series)
                 self.y.append(label)
@@ -120,8 +128,10 @@ class SleepWake:
         Create LSTM model with relu activation and MSE loss.
         """
         model = Sequential()
+        # NEED TO ADD VARIABLE AXIS DIM (for sleep as android: 1d actigraphy...)
         model.add(LSTM(units, input_shape=(3,SEQ)))
         model.add(Activation('relu'))
+        # NEED TO ADD VARIABLE LABEL DIM (for sleep as android: 3d labels...)
         model.add(Dense(1))
         model.add(Activation('relu'))
         model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
@@ -311,7 +321,7 @@ class SleepWake:
         plt.show()
             
 if __name__ == "__main__":
-    TRAIN = 3 # 0 for testing / 1 for training / 2 for param sweep analysis
+    TRAIN = 1 # 0 for testing / 1 for training / 2 for param sweep analysis
 
     if TRAIN == 1: # Train a new model
         sleepwake = SleepWake()
