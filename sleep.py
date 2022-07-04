@@ -106,6 +106,43 @@ class Sleep:
             self.session_event_dict[sess_ndx] = self.event_dict
 
 
+    def process_sessions(self):
+        total_cnt = np.array(self.session_actigraphy).shape[0]
+        print(f'processing {total_cnt} sessions')
+        self.session_data = []
+        for session_num in range(total_cnt):
+            self.xplt = self.session_times[session_num]
+            self.yplt = self.session_actigraphy[session_num]    
+
+            self.light_arr = np.zeros_like(self.events_by_time[session_num])
+            self.deep_arr = np.zeros_like(self.events_by_time[session_num])
+            self.rem_arr = np.zeros_like(self.events_by_time[session_num])
+            try:
+                for ndx,vals in enumerate(self.session_event_dict[session_num]['LIGHT_START']):
+                    start_ndx = vals[1]
+                    end_ndx = self.session_event_dict[session_num]['LIGHT_END'][ndx][1]
+                    self.light_arr[start_ndx:end_ndx+1] = 1
+            except:
+                pass
+            try:
+                for ndx,vals in enumerate(self.session_event_dict[session_num]['DEEP_START']):
+                    start_ndx = vals[1]
+                    end_ndx = self.session_event_dict[session_num]['DEEP_END'][ndx][1]
+                    self.deep_arr[start_ndx:end_ndx+1] = 1
+            except:
+                pass
+            try:
+                for ndx,vals in enumerate(self.session_event_dict[session_num]['REM_START']):
+                    start_ndx = vals[1]
+                    end_ndx = self.session_event_dict[session_num]['REM_END'][ndx][1]
+                    self.rem_arr[start_ndx:end_ndx+1] = 1
+            except:
+                pass
+            self.session_data.append([self.yplt, self.light_arr, self.deep_arr, self.rem_arr])
+        
+        # CREATE TIME-SERIES DATA STRUCTURE WITH WINDOW SIZE
+        
+
     def plot_sleep_session(self, session_num):
         self.xplt = self.session_times[session_num]
         self.yplt = self.session_actigraphy[session_num]    
@@ -186,5 +223,6 @@ if __name__ == "__main__":
 
     sleep_session = Sleep(SLEEP_EXPORT_PATH)
     sleep_session.organize_by_events()
-    sleep_session.plot_sleep_session(10)
+    # sleep_session.plot_sleep_session(10)
+    sleep_session.process_sessions()
     # sleep_session.export_data()
