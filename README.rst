@@ -13,6 +13,8 @@ Sleep Status Prediction Results:
 
 |testing_results_example|
 
+|testing_results_accuracy|
+
 Research for Datasets and Ideas
 ===============================
 
@@ -47,6 +49,10 @@ Research ideas will be documented here along with any useful datasets.
   :alt: Testing Example
 
 .. |testing_results_example| image:: model_test_results_subject5005_day7.png
+  :width: 800
+  :alt: Testing Results Example
+
+.. |testing_results_accuracy| image:: param_sweep_accuracy.png
   :width: 800
   :alt: Testing Results Example
 
