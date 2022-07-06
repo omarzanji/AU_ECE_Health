@@ -44,6 +44,10 @@ Research ideas will be documented here along with any useful datasets.
 
     * DeepActi-Net CNN-LSTM model on sleep / wake classification.
 
+#. `Evaluating Commercial Sleep Wearables for Sleep Scoring`_
+
+    * Comapres different wearbles and sensor technology on sleep scoring accuracy.
+
 .. |testing_example| image:: model_test_subject5005_day7.png
   :width: 800
   :alt: Testing Example
@@ -62,3 +66,4 @@ Research ideas will be documented here along with any useful datasets.
 .. _PSG vs. Actigraphy: https://sleep.urbandroid.org/sleep-lab-comparison/
 .. _Sleep-Wake Prediction: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8206690/
 .. _CNN-LSTM Sleep-Wake Prediction: https://www.mdpi.com/2079-9292/8/12/1461
+.. _Evaluating Commercial Sleep Wearables for Sleep Scoring: https://www.dovepress.com/evaluations-of-commercial-sleep-technologies-for-objective-monitoring--peer-reviewed-fulltext-article-NSS
