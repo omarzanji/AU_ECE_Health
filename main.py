@@ -26,15 +26,15 @@ class SleepNet:
     """
     Creates and trains LSTM sleep / wake prediction models and plots results. 
     Model is saved to models/ as a Tensorflow / Keras .model file. Data 
-    is cached with type=0 (training data) and type=1 (validation data). 
+    is cached with domain=0 (training data) and domain=1 (validation data). 
     """
 
-    def __init__(self, type='UrbanPoorIndia', seq=10):
+    def __init__(self, domain='UrbanPoorIndia', seq=10):
         self.seq = seq
-        self.type = type
+        self.type = domain
 
-        x_cache_str = f'type{type}_SEQ{seq}_x.npy'
-        y_cache_str = f'type{type}_SEQ{seq}_y.npy'
+        x_cache_str = f'type{domain}_SEQ{seq}_x.npy'
+        y_cache_str = f'type{domain}_SEQ{seq}_y.npy'
         self.x = []
         self.y = []
         if x_cache_str in os.listdir('cache'):
@@ -42,25 +42,27 @@ class SleepNet:
             self.x = np.load('cache/'+x_cache_str)
             self.y = np.load('cache/'+y_cache_str)
         else:
-            print(f'\n[No X and Y cache found for type: {type}, seq: {seq}]')
+            print(f'\n[No X and Y cache found for type: {domain}, seq: {seq}]')
 
 
     def create_model(self, units=256):
         """
         Create LSTM model with relu activation and MSE loss.
         """
+        xshape = self.x.shape[1]
+        yshape = self.y.shape[1]
         model = Sequential()
         # NEED TO ADD VARIABLE AXIS DIM (for sleep as android: 1d actigraphy...)
-        model.add(LSTM(units, input_shape=(3,self.seq)))
+        model.add(LSTM(units, input_shape=(xshape,self.seq)))
         model.add(Activation('relu'))
         # NEED TO ADD VARIABLE LABEL DIM (for sleep as android: 3d labels...)
-        model.add(Dense(1))
+        model.add(Dense(yshape))
         model.add(Activation('relu'))
         model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
         return model
 
 
-    def train_model(self, model, epochs=5):
+    def train_model(self, model, name, epochs=5):
         """
         Train model with optimal parameters.
         params: 
@@ -74,7 +76,7 @@ class SleepNet:
         self.ypreds = model.predict(xtest)
         accuracy = accuracy_score(ytest, self.ypreds.round())
         print(f'\nAccuracy: {accuracy}\n')
-        model.save('models/sleepnet.model')
+        model.save(f'models/{name}')
 
 
     def train_model_sweep(self):
@@ -83,8 +85,10 @@ class SleepNet:
         """
         print('\n[Starting Parameter Sweep...]\n\n')
 
-        units_ = [64, 128, 256, 512]
-        epochs_ = [2, 5, 10, 15]
+        # units_ = [64, 128, 256, 512]
+        units_ = [8, 32, 64]
+        # epochs_ = [2, 5, 10, 15]
+        epochs_ = [2, 5, 10]
         xtrain, xtest, ytrain, ytest = train_test_split(self.x, self.y)
 
         sweep_dict = {}
@@ -104,7 +108,7 @@ class SleepNet:
             hist = sweep_dict[key][0].history
             self.sweep_dict[str(key)] = {"loss": hist['loss'], "accuracy": hist['accuracy']}
         with open('param_sweep.json', 'w') as f:
-            json.dump(sweep_dict, f)
+            json.dump(self.sweep_dict, f)
 
     def plot_history(self, history):
         plt.figure()
@@ -147,14 +151,18 @@ class SleepNet:
             
 if __name__ == "__main__":
     TYPE = 1 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
+    DOMAIN = 0
+
+    domains = ['SleepAsAndroid', 'UrbanPoorIndia']
+    net = domains[DOMAIN]
 
     if TYPE == 1: # Train a new model
-        sleepnet = SleepNet()
-        model = sleepnet.create_model()
-        sleepnet.train_model(model)
+        sleepnet = SleepNet(net)
+        model = sleepnet.create_model(units=8)
+        sleepnet.train_model(model, net+'.model')
     elif TYPE == 2: # train multiple models with param sweep
-        sleepnet = SleepNet()
+        sleepnet = SleepNet(net)
         sleepnet.train_model_sweep()
     elif TYPE == 3: # plot loss curves for param sweep training
-        sleepnet = SleepNet()
+        sleepnet = SleepNet(net)
         sleepnet.plot_param_sweep()

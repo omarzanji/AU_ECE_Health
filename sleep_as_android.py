@@ -14,6 +14,8 @@ import csv
 # Sleep as Android export path.
 SLEEP_EXPORT_PATH = 'data/sleep-export.csv'
 
+SEQ = 10
+
 class Sleep:
 
     def __init__(self, data_dir):
@@ -106,9 +108,12 @@ class Sleep:
             self.session_event_dict[sess_ndx] = self.event_dict
 
 
-    def process_sessions(self):
+    def process_sessions(self, domain='SleepAsAndroid'):
+        x_cache_str = f'type{domain}_SEQ{SEQ}_x.npy'
+        y_cache_str = f'type{domain}_SEQ{SEQ}_y.npy'
+
         total_cnt = np.array(self.session_actigraphy).shape[0]
-        print(f'processing {total_cnt} sessions')
+        print(f'\n[processing {total_cnt} sessions]')
         self.session_data = []
         for session_num in range(total_cnt):
             self.xplt = self.session_times[session_num]
@@ -141,6 +146,36 @@ class Sleep:
             self.session_data.append([self.yplt, self.light_arr, self.deep_arr, self.rem_arr])
         
         # CREATE TIME-SERIES DATA STRUCTURE WITH WINDOW SIZE
+        print('\n[Creating Time-Series X and Y arrays...]\n')
+        self.x = []
+        self.y = []
+        for session_ndx in range(len(self.session_data)):
+            acti = self.session_data[session_ndx][0]
+            for ndx in range(len(acti)):
+                try:
+                    series = acti[ndx : ndx+SEQ]
+                    
+                    light = self.session_data[session_ndx][1][ndx+SEQ]
+                    deep = self.session_data[session_ndx][2][ndx+SEQ]
+                    rem = self.session_data[session_ndx][3][ndx+SEQ]
+                    labels = [light, deep, rem]
+                    
+                    if len(series) >= SEQ and 'int' in str(type(light)):
+                        print('\n')
+                        print(series)
+                        print(labels)
+                        self.x.append([series]) # make 2D b/c neural net takes variable dims
+                        self.y.append(labels)
+
+                except IndexError:
+                    continue
+
+        self.x = np.array(self.x)
+        self.y = np.array(self.y)
+
+        print('\n[Saving X and Y as cache...]')
+        np.save('cache/'+x_cache_str, self.x)
+        np.save('cache/'+y_cache_str, self.y)
         
 
     def plot_sleep_session(self, session_num):
