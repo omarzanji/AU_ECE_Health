@@ -48,6 +48,11 @@ Research ideas will be documented here along with any useful datasets.
 
     * Comapres different wearbles and sensor technology on sleep scoring accuracy.
 
+#. `AASM Deep Learning CNN+RNN (2022 paper)`_
+
+    * This 2022 paper used CNN+RNN to automate sleep scoring. An example AASM dataset below:
+    * `AASM Standard Open Source Dataset`_
+
 .. |testing_example| image:: model_test_subject5005_day7.png
   :width: 800
   :alt: Testing Example
@@ -67,3 +72,5 @@ Research ideas will be documented here along with any useful datasets.
 .. _Sleep-Wake Prediction: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8206690/
 .. _CNN-LSTM Sleep-Wake Prediction: https://www.mdpi.com/2079-9292/8/12/1461
 .. _Evaluating Commercial Sleep Wearables for Sleep Scoring: https://www.dovepress.com/evaluations-of-commercial-sleep-technologies-for-objective-monitoring--peer-reviewed-fulltext-article-NSS
+.. _AASM Deep Learning CNN+RNN (2022 paper): https://www.mdpi.com/1648-9144/58/6/779/pdf?version=1654756652
+.. _AASM Standard Open Source Dataset: https://github.com/Dreem-Organization/dreem-learning-open

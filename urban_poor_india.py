@@ -18,15 +18,15 @@ class UrbanPoorIndia:
             # load a model created from main.py (SleepNet)
             self.model = keras.models.load_model(model)
 
-    def load_data(self, train=0, type='UrbanPoorIndia'):
+    def load_data(self, train=0, domain='UrbanPoorIndia'):
         """
         Loads data. 
         params:
             train: 1 generates new X and Y cache, 0 loads validation data.
-            type: str for naming X and Y cache.
+            domain: str for naming X and Y cache.
         """
-        x_cache_str = f'type{type}_SEQ{SEQ}_x.npy'
-        y_cache_str = f'type{type}_SEQ{SEQ}_y.npy'
+        x_cache_str = f'type{domain}_SEQ{SEQ}_x.npy'
+        y_cache_str = f'type{domain}_SEQ{SEQ}_y.npy'
         self.x = []
         self.y = []
         try:
@@ -79,9 +79,9 @@ class UrbanPoorIndia:
         if len(self.x)==0: self.process_data(train) # No cache found, create X and Y
         
 
-    def process_data(self, train=0, type='UrbanPoorIndia'):
-        x_cache_str = f'type{type}_SEQ{SEQ}_x.npy'
-        y_cache_str = f'type{type}_SEQ{SEQ}_y.npy'
+    def process_data(self, train=0, domain='UrbanPoorIndia'):
+        x_cache_str = f'type{domain}_SEQ{SEQ}_x.npy'
+        y_cache_str = f'type{domain}_SEQ{SEQ}_y.npy'
 
         print('\n[Creating Time-Series X and Y arrays...]\n')
         
