@@ -6,14 +6,15 @@ date: 3/21/2022
 organizaion: Auburn University ECE
 '''
 
-import json 
+import json
+from operator import truth 
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
 import numpy as np
 from sklearn import metrics
 
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Activation, Dropout
+from tensorflow.keras.layers import LSTM, Dense, Activation, Dropout, Bidirectional
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import tensorflow as tf
@@ -51,15 +52,26 @@ class SleepNet:
         """
         xshape = self.x.shape[1]
         yshape = self.y.shape[1]
+        print(f'xshape: {xshape}', f'yshape: {yshape}')
         model = Sequential()
-        # NEED TO ADD VARIABLE AXIS DIM (for sleep as android: 1d actigraphy...)
-        model.add(LSTM(units, input_shape=(xshape,self.seq)))
-        model.add(Activation('relu'))
-        # NEED TO ADD VARIABLE LABEL DIM (for sleep as android: 3d labels...)
-        model.add(Dense(yshape))
-        model.add(Activation('relu'))
-        model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
-        return model
+        if self.type == 'UrbanPoor':
+            model.add(LSTM(units, input_shape=(xshape,self.seq)))
+            model.add(Activation('relu'))
+            model.add(Dense(yshape))
+            model.add(Activation('relu'))
+            model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
+            return model
+        else:
+            model.add(Bidirectional(LSTM(units, return_sequences=True), input_shape=(xshape,self.seq)))
+            model.add(Bidirectional(LSTM(units)),)
+            # model.add(Activation('relu'))
+            model.add(Dropout(0.2))
+            # model.add(LSTM(units, input_shape=(xshape,self.seq)))
+            # model.add(Activation('sigmoid'))
+            model.add(Dense(yshape))
+            model.add(Activation('softmax'))
+            model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics='accuracy')
+            return model
 
 
     def train_model(self, model, name, epochs=5):
@@ -74,10 +86,21 @@ class SleepNet:
         self.plot_history(self.hist)
         model.summary()
         self.ypreds = model.predict(xtest)
-        accuracy = accuracy_score(ytest, self.ypreds.round())
-        print(f'\nAccuracy: {accuracy}\n')
+        self.get_accuracy(ytest, self.ypreds)
+        self.ytest = ytest
         model.save(f'models/{name}')
 
+    def get_accuracy(self, yT, yP):
+        if self.type == 'UrbanPoor':
+            accuracy = accuracy_score(yT, yP.round())
+        else:
+            y_truth = []
+            y_pred = []
+            for i in range(len(yT)):
+                y_truth.append(np.argmax(yT[i]))
+                y_pred.append(np.argmax(yP[i]))
+            accuracy = accuracy_score(y_truth, y_pred)
+        print(f'\nAccuracy: {accuracy}\n')
 
     def train_model_sweep(self):
         """
@@ -85,10 +108,10 @@ class SleepNet:
         """
         print('\n[Starting Parameter Sweep...]\n\n')
 
-        # units_ = [64, 128, 256, 512]
-        units_ = [8, 32, 64]
-        # epochs_ = [2, 5, 10, 15]
-        epochs_ = [2, 5, 10]
+        units_ = [64, 128, 256, 512]
+        # units_ = [8, 32, 64]
+        epochs_ = [2, 5, 10, 15]
+        # epochs_ = [2, 5, 10]
         xtrain, xtest, ytrain, ytest = train_test_split(self.x, self.y)
 
         sweep_dict = {}
@@ -151,15 +174,15 @@ class SleepNet:
             
 if __name__ == "__main__":
     TYPE = 1 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
-    DOMAIN = 0
-
-    domains = ['SleepAsAndroid', 'UrbanPoorIndia']
+    
+    DOMAIN = 2
+    domains = ['SleepAsAndroid', 'UrbanPoorIndia', 'AASM']
     net = domains[DOMAIN]
 
     if TYPE == 1: # Train a new model
         sleepnet = SleepNet(net)
-        model = sleepnet.create_model(units=8)
-        sleepnet.train_model(model, net+'.model')
+        model = sleepnet.create_model(units=128)
+        sleepnet.train_model(model, net+'.model', epochs=5)
     elif TYPE == 2: # train multiple models with param sweep
         sleepnet = SleepNet(net)
         sleepnet.train_model_sweep()

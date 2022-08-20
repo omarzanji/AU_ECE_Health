@@ -5,3 +5,5 @@ sleep-export.csv
 *.npy
 *actigraphy.json
 *android_data.json
+*.h5
+dodh_sessions.pkl
