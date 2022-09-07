@@ -40,7 +40,10 @@ def gen_dodh_data():
     def expand_labels(labels, eeg):
         label_size = labels.size
         eeg_size = eeg.size
+
+        # divide number of samples with label size to see how many samples per label
         step = int(eeg_size / label_size)
+
         # avg_data = []
         expanded_labels = []
         for label_index,i in enumerate(range(0, eeg_size, step)):
@@ -102,7 +105,8 @@ def gen_urban_india():
     """
     Generates Urban Poor in India dataset for SleepNet.
     """
-    SAMPLES = 7
+    SAMPLES = 14
+    print(f'gathering and transforming {SAMPLES} samples...')
     df = pd.read_stata('actigraph_epochs_cleaned.dta')
     count = 0
     data = dict()
@@ -123,12 +127,23 @@ def gen_urban_india():
             data[pid].append([pid, day, time_hr, sleep_time, lux, sleep_status, axis1, axis2, axis3])
         else:
             count+=1
-            if count == SAMPLES: break
+            if count == SAMPLES+1: break
             data[pid] = [[pid, day, time_hr, sleep_time, lux, sleep_status, axis1, axis2, axis3]]
-
+    data_keys = data.keys()
+    train_data = dict()
+    val_data = dict()
+    for pid_count,key in enumerate(data_keys, 1):
+        if pid_count <= SAMPLES-2:
+            train_data[key] = data[key]
+        if pid_count > SAMPLES-2: # take the last two samples for validation
+            val_data[key] = data[key]
+    print(f'{len(train_data)} Training Samples, {len(val_data)} Validation Samples')
     with open('actigraphy.json', 'w') as f:
-        json.dump(data, f)
+        json.dump(train_data, f)
+    with open('validation_actigraphy.json', 'w') as f:
+        json.dump(val_data, f)
 
 if __name__ == "__main__":
-    data = gen_dodh_data()
+    # data = gen_dodh_data()
     # get_dodh_data()
+    gen_urban_india()

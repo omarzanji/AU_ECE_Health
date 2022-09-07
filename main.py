@@ -77,8 +77,6 @@ class SleepNet:
     def train_model(self, model, name, epochs=5):
         """
         Train model with optimal parameters.
-        params: 
-            save: 1 to save, 0 to just run.
         """
         print('\n[Training Model...]\n\n')
         xtrain, xtest, ytrain, ytest = train_test_split(self.x, self.y)
@@ -141,12 +139,13 @@ class SleepNet:
         plt.xlabel('epoch')
         plt.legend(['training loss'], loc='upper right')
 
-        # plt.figure()
-        # plt.plot(history.history['accuracy'])
-        # plt.title('model accuracy')
-        # plt.ylabel('accuracy')
-        # plt.xlabel('epoch')
-        # plt.legend(['train'], loc='upper left')
+        plt.figure()
+        plt.plot(history.history['accuracy'])
+        plt.title('Model Training Accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['train'], loc='upper left')
+        plt.show()
 
 
     def plot_param_sweep(self):
