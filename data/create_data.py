@@ -36,7 +36,6 @@ def gen_dodh_data():
 
     print('processing dodh data')
     
-    # def process_data(labels, eeg):
     def expand_labels(labels, eeg):
         label_size = labels.size
         eeg_size = eeg.size
@@ -44,24 +43,16 @@ def gen_dodh_data():
         # divide number of samples with label size to see how many samples per label
         step = int(eeg_size / label_size)
 
-        # avg_data = []
+        # evenly distribute labels over signal
         expanded_labels = []
         for label_index,i in enumerate(range(0, eeg_size, step)):
             expanded_labels.append(np.full(step, labels[label_index]))
-            # data = eeg[i:i+step] 
-            # data_avg = sum(data) / len(data) # average the data into one
-            # avg_data.append(data_avg)
         return np.array(expanded_labels).flatten()
 
     sleep_sessions = dict()
 
-    # with open('saved_dictionary.pkl', 'wb') as f:
-    #     pickle.dump(dictionary, f)
-        
-    # with open('saved_dictionary.pkl', 'rb') as f:
-    #     loaded_dict = pickle.load(f)
     print('transforming data...')
-    for ndx,filename in enumerate(os.listdir()):
+    for ndx,filename in enumerate(os.listdir('dodh_data')):
         if filename.endswith(".h5"):
             f = h5py.File(filename, "r")
             session = f'session {ndx+1}'
@@ -107,7 +98,7 @@ def gen_urban_india():
     """
     SAMPLES = 14
     print(f'gathering and transforming {SAMPLES} samples...')
-    df = pd.read_stata('actigraph_epochs_cleaned.dta')
+    df = pd.read_stata('urban_poor_data/actigraph_epochs_cleaned.dta')
     count = 0
     data = dict()
     for x in df.iterrows():

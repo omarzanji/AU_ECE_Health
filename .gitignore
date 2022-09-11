@@ -7,3 +7,4 @@ sleep-export.csv
 *android_data.json
 *.h5
 dodh_sessions.pkl
+*.model
