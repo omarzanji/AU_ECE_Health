@@ -13,14 +13,17 @@ class AASM:
     def __init__(self):
         self.load_data()
         self.domain = 'AASM'
+        self.step_size = 15
+        self.seq = 30
+
+    def load_model(self):
         model = f'../models/{self.domain}.model'
         print('Loading model...')
         self.model = keras.models.load_model(model)
         print('Done.')
-        self.step_size = 5
-        self.seq = 10
 
     def load_data(self):
+        print('\n[Loading data...]')
         try:
             with open('../data/dodh_sessions.pkl', 'rb') as f:
                 self.sessions = pickle.load(f)
@@ -44,31 +47,37 @@ class AASM:
 
 
     def create_time_series(self):
-        print('\n[Creating Time-Series Data...]')
+        print('\n[Creating Time-Series Data...]\n')
         seq = self.seq
         self.x_time_series = []
         self.y_time_series = []
-        eeg_size = len(self.x[0][0])
         step_size = self.step_size
         for ndx,session in enumerate(self.x):
-            if ndx==3: break # load in 12 sessions
+            if ndx==10: break # load in 12 sessions
+            print(f'processing session {ndx+1}')
             labels = self.y[ndx]
-            for i in range(0, eeg_size, step_size):
+            for current_label_ndx in range(0, len(labels), step_size):
                 onehot = [0,0,0,0,0]
                 try:
-                    label = int(labels[i+seq])
+                    label = labels[current_label_ndx]
                 except IndexError:
                     break
                 onehot[label] = 1
-                data = []
-                for sig_num, session_data in enumerate(session):
-                    series = session_data[i : i+seq]
-                    data.append(series)  
-                self.x_time_series.append(data)
-                self.y_time_series.append(onehot)
+                signal_len = len(session[0][0])
+                for i in range(0, signal_len, step_size):
+                    data = []
+                    for sig_num, session_data in enumerate(session):
+                        raw_data = session_data[current_label_ndx]
+                        series = raw_data[i : i+seq]
+                        if len(series)==seq:
+                            data.append(series)  
+                    if len(data)==16:
+                        self.x_time_series.append(data)
+                        self.y_time_series.append(onehot)
 
-        self.x_time_series = np.array(self.x_time_series)
-        self.y_time_series = np.array(self.y_time_series)
+        print('Converting to np array...')
+        self.x_time_series = np.array(self.x_time_series, dtype=np.float64)
+        # self.y_time_series = np.array(self.y_time_series)
 
         # SAVE AS NPY CACHE FOR MAIN SLEEPNET
         domain = self.domain
@@ -92,7 +101,8 @@ class AASM:
         plt.show()
             
 
-    def predict_session(self, session_num=3):
+    def predict_session(self, session_num=12):
+        self.load_model()
         seq = self.seq
         step_size = self.step_size
         xtest_time_series = []

@@ -63,7 +63,7 @@ class SleepNet:
             return model
         else:
             model.add(Bidirectional(LSTM(units, return_sequences=True), input_shape=(xshape,self.seq)))
-            model.add(Bidirectional(LSTM(units)),)
+            model.add(Bidirectional(LSTM(units)))
             # model.add(Activation('relu'))
             model.add(Dropout(0.2))
             # model.add(LSTM(units, input_shape=(xshape,self.seq)))
@@ -177,11 +177,12 @@ if __name__ == "__main__":
     DOMAIN = 2
     domains = ['SleepAsAndroid', 'UrbanPoorIndia', 'AASM']
     net = domains[DOMAIN]
+    seq = 30
 
     if TYPE == 1: # Train a new model
-        sleepnet = SleepNet(net)
-        model = sleepnet.create_model(units=128)
-        sleepnet.train_model(model, net+'.model', epochs=5)
+        sleepnet = SleepNet(net, seq=seq)
+        model = sleepnet.create_model(units=256)
+        sleepnet.train_model(model, net+'.model', epochs=15)
     elif TYPE == 2: # train multiple models with param sweep
         sleepnet = SleepNet(net)
         sleepnet.train_model_sweep()

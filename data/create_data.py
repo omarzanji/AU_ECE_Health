@@ -1,3 +1,4 @@
+from cProfile import label
 import pickle
 import pandas as pd
 import wget
@@ -36,29 +37,32 @@ def gen_dodh_data():
 
     print('processing dodh data')
     
-    def expand_labels(labels, eeg):
-        label_size = labels.size
-        eeg_size = eeg.size
-
+    def create_data(label_size, raw_data):
+        raw_data_size = raw_data.size
+        
         # divide number of samples with label size to see how many samples per label
-        step = int(eeg_size / label_size)
+        chunk_size = int(raw_data_size / label_size)
 
         # evenly distribute labels over signal
-        expanded_labels = []
-        for label_index,i in enumerate(range(0, eeg_size, step)):
-            expanded_labels.append(np.full(step, labels[label_index]))
-        return np.array(expanded_labels).flatten()
+        chunked_data = []
+        for i in range(0, raw_data_size, chunk_size):
+            chunked_data.append(raw_data[i:i+chunk_size])
+        return chunked_data
 
     sleep_sessions = dict()
 
     print('transforming data...')
     for ndx,filename in enumerate(os.listdir('dodh_data')):
         if filename.endswith(".h5"):
+            print(f'processing session {ndx+1}')
+            filename = 'dodh_data/' + filename
             f = h5py.File(filename, "r")
             session = f'session {ndx+1}'
-            sleep_sessions[session] = dict()
             labels = f['hypnogram'][()]
-            
+            sleep_sessions[session] = dict()
+            sleep_sessions[session]['labels'] = labels
+
+            label_size = labels.size
             eegs = f['signals']['eeg']
             emgs = f['signals']['emg']
             eogs = f['signals']['eog']
@@ -66,22 +70,23 @@ def gen_dodh_data():
             for eeg in eegs.keys():
                 eeg_name = eeg
                 eeg_data = eegs[eeg][()]
-                # eeg_data = process_data(labels, eeg_data)
-                sleep_sessions[session][eeg_name] = eeg_data
+                data = create_data(label_size, eeg_data)
+                sleep_sessions[session][eeg_name] = data
+
             for emg in emgs.keys():
                 emg_name = emg
                 emg_data = emgs[emg][()]
-                # emg_data = process_data(labels, emg_data)
-                sleep_sessions[session][emg_name] = emg_data
+                data = create_data(label_size, emg_data)
+                sleep_sessions[session][emg_name] = data
+
             for eog in eogs.keys():
                 eog_name = eog
                 eog_data = eogs[eog][()]
-                # eog_data = process_data(labels, eog_data)
-                sleep_sessions[session][eog_name] = eog_data
+                data = create_data(label_size, eog_data)
+                sleep_sessions[session][eog_name] = data
 
-            expanded_labels = expand_labels(labels, eeg_data)
-            sleep_sessions[session]['labels'] = expanded_labels
 
+    print('saving data...')
     with open('dodh_sessions.pkl', 'wb') as f:
         pickle.dump(sleep_sessions, f)
 
@@ -135,6 +140,6 @@ def gen_urban_india():
         json.dump(val_data, f)
 
 if __name__ == "__main__":
-    # data = gen_dodh_data()
+    data = gen_dodh_data()
     # get_dodh_data()
-    gen_urban_india()
+    # gen_urban_india()
