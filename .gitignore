@@ -9,3 +9,4 @@ sleep-export.csv
 dodh_sessions.pkl
 *.model
 *.zip
+.DS_Store
