@@ -50,11 +50,11 @@ class SleepNet:
         """
         Create LSTM model with relu activation and MSE loss.
         """
-        xshape = self.x.shape[1]
-        yshape = self.y.shape[1]
-        print(f'xshape: {xshape}', f'yshape: {yshape}')
         model = Sequential()
         if self.type == 'UrbanPoor':
+            xshape = self.x.shape[1]
+            yshape = 1
+            print(f'xshape: {xshape}', f'yshape: {yshape}')
             model.add(LSTM(units, input_shape=(xshape,self.seq)))
             model.add(Activation('relu'))
             model.add(Dense(yshape))
@@ -62,6 +62,9 @@ class SleepNet:
             model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
             return model
         else:
+            xshape = self.x.shape[1]
+            yshape = self.y.shape[1]
+            print(f'xshape: {xshape}', f'yshape: {yshape}')
             model.add(Bidirectional(LSTM(units, return_sequences=True), input_shape=(xshape,self.seq)))
             model.add(Bidirectional(LSTM(units)))
             # model.add(Activation('relu'))
@@ -174,10 +177,10 @@ class SleepNet:
 if __name__ == "__main__":
     TYPE = 1 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
     
-    DOMAIN = 2
+    DOMAIN = 1
     domains = ['SleepAsAndroid', 'UrbanPoorIndia', 'AASM']
     net = domains[DOMAIN]
-    seq = 30
+    seq = 10
 
     if TYPE == 1: # Train a new model
         sleepnet = SleepNet(net, seq=seq)

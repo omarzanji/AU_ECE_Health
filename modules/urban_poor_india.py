@@ -212,8 +212,9 @@ class UrbanPoorIndia:
         # plt.show()
 
 if __name__ == "__main__":
-    sleep_net = UrbanPoorIndia(model='../models/sleepwake.model')
-    sleep_net.load_data(train=0)
-    sleep_net.visualize_data(8, 5)
-    sleep_net.generate(8, 5)
-    plt.show()
+    sleep_net = UrbanPoorIndia(model='')
+    sleep_net.load_data(train=1)
+    # sleep_net.visualize_data(8, 5)
+    # sleep_net.generate(8, 5)
+    # plt.show()
+    sleep_net.process_data()

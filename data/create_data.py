@@ -140,6 +140,6 @@ def gen_urban_india():
         json.dump(val_data, f)
 
 if __name__ == "__main__":
-    data = gen_dodh_data()
+    # data = gen_dodh_data()
     # get_dodh_data()
-    # gen_urban_india()
+    gen_urban_india()
