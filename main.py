@@ -29,10 +29,10 @@ class SleepNet:
     is cached with domain=0 (training data) and domain=1 (validation data). 
     """
 
-    def __init__(self, domain='UrbanPoorIndia', seq=10):
+    def __init__(self, domain='UrbanPoorIndia', model_arch='LSTM' seq=10):
         self.seq = seq
         self.type = domain
-
+        self.model_arch = model_arch
         x_cache_str = f'type{domain}_SEQ{seq}_x.npy'
         y_cache_str = f'type{domain}_SEQ{seq}_y.npy'
         self.x = []
@@ -43,37 +43,44 @@ class SleepNet:
             self.y = np.load('cache/'+y_cache_str)
         else:
             print(f'\n[No X and Y cache found for type: {domain}, seq: {seq}]')
+        
 
-
-    def create_model(self, units=256):
+    def create_model(self, units=None):
         """
         Create LSTM model with relu activation and MSE loss.
         """
+        model_arch = self.model_arch
         model = Sequential()
         if self.type == 'UrbanPoorIndia':
             xshape = self.x.shape[1]
             yshape = 1
             print(f'xshape: {xshape}', f'yshape: {yshape}')
-            model.add(LSTM(units, input_shape=(xshape,self.seq)))
-            model.add(Activation('relu'))
-            model.add(Dense(yshape))
-            model.add(Activation('relu'))
-            model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
-            return model
+            if model_arch == 'LSTM':
+                model.add(LSTM(units, input_shape=(xshape,self.seq)))
+                model.add(Activation('relu'))
+                model.add(Dense(yshape))
+                model.add(Activation('relu'))
+                model.compile(optimizer='adam', loss=tf.keras.losses.MeanSquaredLogarithmicError(), metrics='accuracy')
+                return model
+            else: # XGBoost goes here...
+                pass
         else:
             xshape = self.x.shape[1]
             yshape = self.y.shape[1]
             print(f'xshape: {xshape}', f'yshape: {yshape}')
-            model.add(Bidirectional(LSTM(units, return_sequences=True), input_shape=(xshape,self.seq)))
-            model.add(Bidirectional(LSTM(units)))
-            # model.add(Activation('relu'))
-            model.add(Dropout(0.2))
-            # model.add(LSTM(units, input_shape=(xshape,self.seq)))
-            # model.add(Activation('sigmoid'))
-            model.add(Dense(yshape))
-            model.add(Activation('softmax'))
-            model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics='accuracy')
-            return model
+            if model_arch == 'LSTM':
+                model.add(Bidirectional(LSTM(units, return_sequences=True), input_shape=(xshape,self.seq)))
+                model.add(Bidirectional(LSTM(units)))
+                # model.add(Activation('relu'))
+                model.add(Dropout(0.2))
+                # model.add(LSTM(units, input_shape=(xshape,self.seq)))
+                # model.add(Activation('sigmoid'))
+                model.add(Dense(yshape))
+                model.add(Activation('softmax'))
+                model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics='accuracy')
+                return model
+            else: # other model architectures go here...
+                pass
 
 
     def train_model(self, model, name, epochs=5):
@@ -174,20 +181,23 @@ class SleepNet:
         plt.show()
             
 if __name__ == "__main__":
-    TYPE = 2 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
-    
+    MODE = 2 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
     DOMAIN = 1
-    domains = ['SleepAsAndroid', 'UrbanPoorIndia', 'AASM']
-    net = domains[DOMAIN]
-    seq = 10
+    MODEL = 0
 
-    if TYPE == 1: # Train a new model
-        sleepnet = SleepNet(net, seq=seq)
+    domains = ['SleepAsAndroid', 'UrbanPoorIndia', 'AASM']
+    models = ['LSTM', 'XGBoost']
+
+    net = domains[DOMAIN]
+    arch = models[MODEL]
+
+    if MODE == 1: # Train a new model
+        sleepnet = SleepNet(net, model_arch=arch, seq=10)
         model = sleepnet.create_model(units=256)
         sleepnet.train_model(model, net+'.model', epochs=15)
-    elif TYPE == 2: # train multiple models with param sweep
-        sleepnet = SleepNet(net)
+    elif MODE == 2: # train multiple models with param sweep
+        sleepnet = SleepNet(net, model_arch=arch)
         sleepnet.train_model_sweep()
-    elif TYPE == 3: # plot loss curves for param sweep training
-        sleepnet = SleepNet(net)
+    elif MODE == 3: # plot loss curves for param sweep training
+        sleepnet = SleepNet(net, model_arch=arch)
         sleepnet.plot_param_sweep()
