@@ -50,7 +50,7 @@ class SleepNet:
         Create LSTM model with relu activation and MSE loss.
         """
         model = Sequential()
-        if self.type == 'UrbanPoor':
+        if self.type == 'UrbanPoorIndia':
             xshape = self.x.shape[1]
             yshape = 1
             print(f'xshape: {xshape}', f'yshape: {yshape}')
