@@ -9,6 +9,7 @@ import numpy as np
 import json
 import os
 
+TRAIN = 0
 SEQ = 10
 
 class UrbanPoorIndia:
@@ -30,7 +31,7 @@ class UrbanPoorIndia:
         self.x = []
         self.y = []
         try:
-            if x_cache_str in os.listdir('cache'):
+            if x_cache_str in os.listdir('../cache'):
                 print('\n[Found cached processed data! Loading...]')
                 self.x = np.load('../cache/'+x_cache_str)
                 self.y = np.load('../cache/'+y_cache_str)
@@ -150,13 +151,17 @@ class UrbanPoorIndia:
         gs = gridspec.GridSpec(2, 1, height_ratios=[1,1])
 
         ax0 = plt.subplot(gs[0])
-        line0, = ax0.plot(x[:SEQ], test_y_input[:SEQ], label='input', color='red')
-        line1, = ax0.plot(x[SEQ:], test_y_input[SEQ:], label='pred', color='blue')
+        plt.yticks([1, 0], ['sleep', 'wake'])
+        ax0.set_ylabel('Sleep Status')
+        line0, = ax0.plot(x[:SEQ], test_y_input[:SEQ].astype(int), label='input', color='red')
+        line1, = ax0.plot(x[SEQ:], test_y_input[SEQ:].astype(int), label='pred', color='blue')
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.title('Sleep Status Prediction | Subject %s | Day %d' % (subject_number, day))
 
         ax1 = plt.subplot(gs[1], sharex=ax0, sharey=ax0)
-        line2, = ax1.plot(x, test_y_complete, label='actual', color='green')
+        ax1.set_ylabel('Sleep Status')
+        plt.yticks([1, 0], ['sleep', 'wake'])
+        line2, = ax1.plot(x, np.array(test_y_complete).astype(int), label='actual', color='green')
 
         ax0.legend((line0, line1), ('input', 'predicted'), loc='upper right')
         ax1.legend((line2,), ('actual',), loc='upper right')
@@ -175,7 +180,7 @@ class UrbanPoorIndia:
         subject_number = self.subjects[subject]
 
         fig = plt.figure()
-        gs = gridspec.GridSpec(5, 1, height_ratios=[4, 2, 2, 1, 3]) 
+        gs = gridspec.GridSpec(4, 1, height_ratios=[4, 2, 2, 3]) 
 
         ax0 = plt.subplot(gs[0])
         line0, = ax0.plot(self.sleep_time_arr[start:end+1], self.axis1_arr[start:end+1], color='r')
@@ -191,30 +196,34 @@ class UrbanPoorIndia:
         line2, = ax2.plot(self.sleep_time_arr[start:end+1], self.axis3_arr[start:end+1], color='b')
         plt.setp(ax2.get_xticklabels(), visible=False)
         
-        ax3 = plt.subplot(gs[3], sharex=ax0)
-        self.actigraph = np.array(self.axis1_arr[start:end+1]) + np.array(self.axis2_arr[start:end+1]) + np.array(self.axis3_arr[start:end+1])
-        self.actigraph = (self.actigraph / np.max(self.actigraph)) * 10 
-        line3, = ax3.plot(self.sleep_time_arr[start:end+1], self.actigraph, color='purple')
-        plt.setp(ax3.get_xticklabels(), visible=False)
-        plt.ylabel('Actigraphy')
+        # ax3 = plt.subplot(gs[3], sharex=ax0)
+        # self.actigraph = np.array(self.axis1_arr[start:end+1]) + np.array(self.axis2_arr[start:end+1]) + np.array(self.axis3_arr[start:end+1])
+        # self.actigraph = (self.actigraph / np.max(self.actigraph)) * 10 
+        # line3, = ax3.plot(self.sleep_time_arr[start:end+1], self.actigraph, color='purple')
+        # plt.setp(ax3.get_xticklabels(), visible=False)
+        # plt.ylabel('Actigraphy')
 
-        ax4 = plt.subplot(gs[4], sharex=ax0)
-        line4, = ax4.plot(self.sleep_time_arr[start:end+1], self.sleep_status_arr[start:end+1], color='orange')
+        ax3 = plt.subplot(gs[3], sharex=ax0)
+        plt.yticks([1,0], ['sleep', 'wake'])
+        line3, = ax3.plot(self.sleep_time_arr[start:end+1], np.array(self.sleep_status_arr[start:end+1]).astype(int), color='orange')
         plt.ylabel('Sleep\nStatus')
-        ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
 
         # plot settings 
-        ax0.legend((line0, line1, line2, line4), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
-        ax3.legend((line3,), ('normalized actigraphy',), loc='upper right')   
+        ax0.legend((line0, line1, line2, line3), ('axis 1', 'axis 2', 'axis 3', 'sleep status'), loc='upper right')
         plt.subplots_adjust(hspace=.1)
         plt.xticks(np.arange(0, len(self.sleep_time_arr[start:end+1]), 100))
         plt.xlabel('Timestamp')
         # plt.show()
 
 if __name__ == "__main__":
-    sleep_net = UrbanPoorIndia(model='')
-    sleep_net.load_data(train=1)
-    # sleep_net.visualize_data(8, 5)
-    # sleep_net.generate(8, 5)
-    # plt.show()
-    sleep_net.process_data()
+
+    if TRAIN==1: # create x,y time series arrays for training new model with ../main.py
+        sleep_net = UrbanPoorIndia(model='')
+        sleep_net.load_data(train=TRAIN)
+        sleep_net.process_data()
+    else:
+        sleep_net = UrbanPoorIndia(model='../models/UrbanPoorIndia.model')
+        sleep_net.load_data(train=TRAIN)
+        sleep_net.visualize_data(0, 5)
+        sleep_net.generate(0, 5)
+        plt.show()

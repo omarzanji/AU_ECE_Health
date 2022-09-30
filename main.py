@@ -7,7 +7,6 @@ organizaion: Auburn University ECE
 '''
 
 import json
-from operator import truth 
 from matplotlib import pyplot as plt
 from matplotlib import gridspec
 import numpy as np
@@ -131,7 +130,7 @@ class SleepNet:
         for key in keys:
             hist = sweep_dict[key][0].history
             self.sweep_dict[str(key)] = {"loss": hist['loss'], "accuracy": hist['accuracy']}
-        with open('param_sweep.json', 'w') as f:
+        with open(f'{self.type}_param_sweep.json', 'w') as f:
             json.dump(self.sweep_dict, f)
 
     def plot_history(self, history):
@@ -152,14 +151,14 @@ class SleepNet:
 
 
     def plot_param_sweep(self):
-        with open('param_sweep.json', 'r') as f:
+        with open(f'{self.type}_param_sweep.json', 'r') as f:
             param_sweep = json.load(f)
         plt.figure()
         for key in param_sweep.keys():
             plt.plot(param_sweep[key]['loss'], label=key+' loss')
         plt.ylabel('loss')
         plt.xlabel('epochs')
-        plt.title('Param Sweep on sleepnet LSTM Model')
+        plt.title(f'Param Sweep on {self.type} LSTM Model')
         plt.yscale('log')
         plt.legend()
 
@@ -168,14 +167,14 @@ class SleepNet:
             plt.plot(param_sweep[key]['accuracy'], label=key+' accuracy')
         plt.ylabel('accuracy')
         plt.xlabel('epochs')
-        plt.title('Param Sweep on sleepnet LSTM Model')
+        plt.title('Param Sweep on {self.type} LSTM Model')
         plt.yscale('log')
         plt.legend()
 
         plt.show()
             
 if __name__ == "__main__":
-    TYPE = 1 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
+    TYPE = 2 # 1 for training / 2 for param sweep training / 3 for plotting param sweep results
     
     DOMAIN = 1
     domains = ['SleepAsAndroid', 'UrbanPoorIndia', 'AASM']
