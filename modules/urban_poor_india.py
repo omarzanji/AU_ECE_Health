@@ -9,7 +9,7 @@ import numpy as np
 import json
 import os
 
-TRAIN = 0
+TRAIN = 1
 SEQ = 10
 
 class UrbanPoorIndia:
