@@ -181,7 +181,8 @@ class SleepNet:
             self.sweep_dict = {}
             for key in keys:
                 hist = sweep_dict[key][0].history
-                self.sweep_dict[str(key)] = {"loss": hist['loss'], "accuracy": hist['accuracy']}
+                testing_accuracy = sweep_dict[key][1]
+                self.sweep_dict[str(key)] = {"loss": hist['loss'], "accuracy": hist['accuracy'], "testing_accuracy": testing_accuracy}
             with open(f'{self.type}_{self.model_arch}_param_sweep.json', 'w') as f:
                 json.dump(self.sweep_dict, f)
                 
@@ -219,20 +220,58 @@ class SleepNet:
 
 
     def plot_param_sweep(self):
+
+        # generate bar plot of min, average, and max accuracy results 
+        def make_acc_bar_plot(acc_x_arr, acc_y_arr):
+            min = np.min(acc_y_arr)
+            min_ndx = acc_y_arr.index(min)
+            max = np.max(acc_y_arr)
+            max_ndx = acc_y_arr.index(max)
+            avg = np.average(acc_y_arr)
+            for val in acc_y_arr:
+                if val >= avg:
+                    avg_val = val
+                    break
+            avg_ndx = acc_y_arr.index(avg_val)
+            x = [
+                acc_x_arr[min_ndx],
+                acc_x_arr[avg_ndx],
+                acc_x_arr[max_ndx]
+            ]
+            y = [
+                acc_y_arr[min_ndx],
+                acc_y_arr[avg_ndx],
+                acc_y_arr[max_ndx]
+            ]
+            arr = ['min', 'avg', 'max']
+            for x_,y_ in zip(x,y):
+                plt.bar(x_,y_, label=f'{arr[x.index(x_)]}', width=0.3)
+                plt.text(x_,y_,str(y_*100)[0:5], ha='center', va='bottom')
+
         with open(f'{self.type}_{self.model_arch}_param_sweep.json', 'r') as f:
             param_sweep = json.load(f)
+
         if self.model_arch=='LSTM':
+            
+            # Generate loss curves plot and collect testing accuracies for bar plot later
             plt.figure()
+            test_acc_x = []
+            test_acc_y = []
             for key in param_sweep.keys():
                 units = ast.literal_eval(key)[0]
                 epochs = ast.literal_eval(key)[1]
-                plt.plot(param_sweep[key]['loss'], label=f'{units} units, {epochs} epochs')
+                loss_curve = param_sweep[key]['loss']
+                testing_accuracy = param_sweep[key]['testing_accuracy']
+                test_acc_x.append(f'{units} units, {epochs} epochs')
+                test_acc_y.append(testing_accuracy)
+                plt.plot(loss_curve, label=f'{units} units, {epochs} epochs')
             plt.ylabel('loss')
             plt.xlabel('Training epochs')
             plt.title(f'Parameter Sweep Losses on {self.type} LSTM Model')
             plt.yscale('log')
             plt.legend()
 
+            # Generate accuracy curve plots
             plt.figure()
             for key in param_sweep.keys():
                 units = ast.literal_eval(key)[0]
@@ -243,6 +282,16 @@ class SleepNet:
             plt.title(f'Parameter Sweep Accuracies on {self.type} LSTM Model')
             plt.yscale('log')
             plt.legend()
+
+            # Make bar plot
+            make_acc_bar_plot(test_acc_x, test_acc_y)
+
+            plt.title('Accuracies from LSTM Parameter Sweep')
+            plt.tight_layout()
+            plt.legend()
+            plt.ylim((0, 1.2))
+            plt.xlabel('Parameters')
+            plt.ylabel('Accuracy')
 
             plt.show()
 
