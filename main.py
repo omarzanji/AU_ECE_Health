@@ -369,7 +369,7 @@ class SleepNet:
 
             
 if __name__ == "__main__":
-    MODE = 3 # 1 for training / 2 for param sweep training / 3 for metrics
+    MODE = 2 # 1 for training / 2 for param sweep training / 3 for metrics
     DOMAIN = 1
     MODEL = 0
 
