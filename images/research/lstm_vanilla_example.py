@@ -32,7 +32,6 @@ def generate_data(step_size=SEQ, y_vals=[]):
         y.append(next_point)
     return np.array(x),np.array(y)
 
-
 class LSTM_model:
 
     def __init__(self, x, y):
